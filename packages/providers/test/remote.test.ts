@@ -1,89 +1,52 @@
 import assert from "node:assert/strict";
-import { once } from "node:events";
-import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
-import type { AddressInfo } from "node:net";
 import { test } from "node:test";
 import {
   createGitHubAdapter,
   createGmailAdapter,
   createSlackAdapter,
+  ProviderConfigurationError,
   ProviderRequestError,
 } from "../src/index.ts";
+import { listen, ok, type Route } from "./server.ts";
 
-const send = (response: ServerResponse, status: number, payload: unknown): void => {
-  response.writeHead(status, { "content-type": "application/json" });
-  response.end(JSON.stringify(payload));
-};
+const issue = (number: number, state: "open" | "closed") => ({
+  id: number,
+  number,
+  title: "Closed fix",
+  body: "Merged",
+  state,
+  html_url: `https://github.example/rectify/app/issues/${String(number)}`,
+  labels: [{ id: 1, name: "bug" }],
+  updated_at: "2026-09-01T00:00:00Z",
+});
 
-const providerResponse = (request: IncomingMessage, response: ServerResponse): void => {
-  const path = request.url ?? "";
-  if (request.method === "GET" && path.startsWith("/gmail/v1/users/me/threads/thread-1")) {
-    send(response, 200, { id: "thread-1", messages: [{ id: "message-1", threadId: "thread-1" }] });
-    return;
+const providerRoute: Route = (request) => {
+  if (request.method === "GET" && request.url.startsWith("/gmail/v1/users/me/threads/thread-1")) {
+    return ok({ id: "thread-1", messages: [] });
   }
-  if (request.method === "POST" && path === "/gmail/v1/users/me/drafts") {
-    send(response, 200, {
-      id: "draft-1",
-      message: { id: "draft-message-1", threadId: "thread-1", labelIds: ["DRAFT"] },
-    });
-    return;
+  if (request.method === "POST" && request.url === "/gmail/v1/users/me/drafts") {
+    return ok({ id: "draft-1", message: { id: "draft-message-1", threadId: "thread-1" } });
   }
-  if (request.method === "GET" && path === "/repos/rectify/app/issues/7") {
-    send(response, 200, {
-      id: 7,
-      number: 7,
-      title: "Closed fix",
-      body: "Merged",
-      state: "closed",
-      html_url: "https://github.example/rectify/app/issues/7",
-    });
-    return;
+  if (request.method === "GET" && request.url === "/repos/rectify/app/issues/7") {
+    return ok(issue(7, "closed"));
   }
-  if (request.method === "POST" && path === "/repos/rectify/app/issues") {
-    send(response, 201, {
-      id: 8,
-      number: 8,
-      title: "Customer impact",
-      body: "Still failing",
-      state: "open",
-      html_url: "https://github.example/rectify/app/issues/8",
-    });
-    return;
+  if (request.method === "POST" && request.url === "/repos/rectify/app/issues") {
+    return { status: 201, payload: issue(8, "open") };
   }
-  if (request.method === "GET" && path === "/api/conversations.history?channel=C123&limit=1") {
-    send(response, 200, { ok: true, messages: [{ ts: "1.000000", text: "Rollout complete" }] });
-    return;
+  if (
+    request.method === "GET" &&
+    request.url === "/api/conversations.history?channel=C123&limit=1"
+  ) {
+    return ok({ ok: true, messages: [{ ts: "1.000000", text: "Rollout complete" }] });
   }
-  if (request.method === "POST" && path === "/api/chat.postMessage") {
-    send(response, 200, {
-      ok: true,
-      channel: "C123",
-      ts: "2.000000",
-      message: { ts: "2.000000", text: "Customer still affected" },
-    });
-    return;
+  if (request.method === "POST" && request.url === "/api/chat.postMessage") {
+    return ok({ ok: true, channel: "C123", ts: "2.000000", message: { text: "Still affected" } });
   }
-  send(response, 404, { error: "unexpected request" });
-};
-
-const listen = async (
-  handler = providerResponse,
-): Promise<{ baseUrl: string; close: () => void }> => {
-  const server = createServer(handler);
-  server.listen(0, "127.0.0.1");
-  await once(server, "listening");
-  const address = server.address() as AddressInfo;
-  return {
-    baseUrl: `http://127.0.0.1:${String(address.port)}`,
-    close: () => {
-      server.closeAllConnections();
-      server.close();
-    },
-  };
+  return undefined;
 };
 
 void test("Arga adapters use the documented provider-shaped read and write endpoints", async () => {
-  const server = await listen();
+  const server = await listen(providerRoute);
   try {
     const gmail = createGmailAdapter({
       mode: "arga",
@@ -110,19 +73,21 @@ void test("Arga adapters use the documented provider-shaped read and write endpo
       (await gmail.createDraft({ threadId: "thread-1", rawMime: "Subject: Retry" })).id,
       "draft-1",
     );
-    assert.equal((await github.readIssue(7)).state, "closed");
+    const sourceIssue = await github.readIssue(7);
+    assert.equal(sourceIssue.state, "closed");
+    assert.deepEqual(sourceIssue.labels, ["bug"]);
     assert.equal((await github.createIssue({ title: "Impact", body: "Failure" })).number, 8);
     assert.equal((await slack.readMessages(1))[0]?.text, "Rollout complete");
-    assert.equal((await slack.postMessage("Customer still affected")).ts, "2.000000");
+    assert.equal((await slack.postMessage({ text: "Still affected" })).ts, "2.000000");
+    assert.equal(slack.channelId, "C123");
+    assert.equal(server.requests[0]?.url, "/gmail/v1/users/me/threads/thread-1?format=full");
   } finally {
     server.close();
   }
 });
 
 void test("remote provider errors surface without a fixture fallback", async () => {
-  const server = await listen((_request, response) => {
-    send(response, 503, { error: "provider unavailable" });
-  });
+  const server = await listen(() => ({ status: 503, payload: { error: "provider unavailable" } }));
   try {
     const github = createGitHubAdapter({
       mode: "arga",
@@ -133,6 +98,27 @@ void test("remote provider errors surface without a fixture fallback", async () 
     });
 
     await assert.rejects(github.readIssue(7), ProviderRequestError);
+  } finally {
+    server.close();
+  }
+});
+
+void test("remote Gmail refuses threads outside the allowlist before any request", async () => {
+  const server = await listen(providerRoute);
+  try {
+    const gmail = createGmailAdapter({
+      mode: "arga",
+      accessToken: "gmail-twin-token",
+      baseUrl: server.baseUrl,
+      allowedThreadIds: ["thread-1"],
+    });
+
+    await assert.rejects(gmail.readThread("thread-2"), ProviderConfigurationError);
+    await assert.rejects(
+      gmail.sendDraft({ draftId: "draft-1", threadId: "thread-2", rawMime: "Subject: x" }),
+      ProviderConfigurationError,
+    );
+    assert.equal(server.requests.length, 0);
   } finally {
     server.close();
   }

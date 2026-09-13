@@ -9,7 +9,22 @@ export const gmailSmokeConfig = (): GmailConfig => {
   if (mode === "local_fixture") {
     return {
       mode,
-      threads: [{ id: threadId, messages: [{ id: "fixture-message-1", threadId }] }],
+      threads: [
+        {
+          id: threadId,
+          messages: [
+            {
+              id: "fixture-message-1",
+              threadId,
+              from: "fixture-customer@example.test",
+              to: "fixture-support@example.test",
+              subject: "Fixture provider smoke source",
+              date: null,
+              bodyText: "Read by the explicitly selected fixture adapter.",
+            },
+          ],
+        },
+      ],
     };
   }
   if (mode === "live") {
@@ -47,6 +62,8 @@ export const githubSmokeConfig = (): GitHubConfig => {
           body: "Read by the explicitly selected fixture adapter.",
           state: "open",
           html_url: `https://github.local/${owner}/${repo}/issues/${String(issueNumber)}`,
+          labels: [],
+          updated_at: new Date().toISOString(),
         },
       ],
     };

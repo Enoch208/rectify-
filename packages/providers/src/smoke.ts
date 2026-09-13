@@ -45,7 +45,7 @@ const run = async (): Promise<void> => {
   const slack = createSlackAdapter(slackSmokeConfig());
   const messages = await slack.readMessages(1);
   report("Slack", slack.mode, `read ${String(messages.length)} message`);
-  const message = await slack.postMessage(`Rectify provider smoke ${nonce}`);
+  const message = await slack.postMessage({ text: `Rectify provider smoke ${nonce}` });
   report("Slack", slack.mode, `posted message ${message.ts}`);
 };
 
