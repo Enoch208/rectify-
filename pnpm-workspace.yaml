@@ -1,0 +1,8 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "evals"
+
+onlyBuiltDependencies:
+  - sharp
+  - unrs-resolver
