@@ -1,5 +1,5 @@
 import type { ProviderEnvironments } from "@rectify/core";
-import { vercelAI, type VercelAITelemetryIntegration } from "@uselemma/tracing";
+import { Lemma, vercelAI, type VercelAITelemetryIntegration } from "@uselemma/tracing";
 import { generateText, stepCountIs, type LanguageModel, type LanguageModelUsage } from "ai";
 import { adaptLemmaTelemetry } from "./lemma-telemetry.ts";
 import { ToolBudget, ToolBudgetExceededError } from "./tool-budget.ts";
@@ -12,6 +12,8 @@ export interface LemmaTurnConfig {
   apiKey: string;
   projectId: string;
   release: string;
+  baseUrl?: string;
+  fetch?: typeof fetch;
 }
 
 export interface AgentTurnInput {
@@ -35,6 +37,7 @@ export interface AgentTurnResult {
   stopReason: "MODEL_FINISH" | "TOOL_CALL_LIMIT";
   toolCallCount: number;
   usage: LanguageModelUsage;
+  traceId: string | null;
   telemetry: { status: "NOT_CONFIGURED" | "DELIVERED" | "FAILED"; error: string | null };
 }
 
@@ -50,42 +53,60 @@ export class AgentTurnLimitError extends Error {
   }
 }
 
-const createTelemetry = (input: AgentTurnInput): VercelAITelemetryIntegration | null =>
-  input.lemma === undefined
-    ? null
-    : vercelAI({
-        apiKey: input.lemma.apiKey,
-        projectId: input.lemma.projectId,
-        release: input.lemma.release,
-        agentName: "rectify-recovery-agent",
-        metadata: {
-          threadId: input.caseId,
-          userId: input.organizationId,
-          runId: input.runId,
-          caseId: input.caseId,
-          actionId: input.actionId,
-          modelId: input.modelId,
-          releaseId: input.releaseId,
-          environments: input.environments,
-        },
-      });
+interface LemmaTelemetry {
+  integration: VercelAITelemetryIntegration;
+  traceId: string;
+}
+
+const createTelemetry = (input: AgentTurnInput): LemmaTelemetry | null => {
+  if (input.lemma === undefined) {
+    return null;
+  }
+  const metadata = {
+    runId: input.runId,
+    caseId: input.caseId,
+    actionId: input.actionId,
+    modelId: input.modelId,
+    releaseId: input.releaseId,
+    environments: input.environments,
+  };
+  const lemma = new Lemma({
+    apiKey: input.lemma.apiKey,
+    projectId: input.lemma.projectId,
+    release: input.lemma.release,
+    ...(input.lemma.baseUrl === undefined ? {} : { baseUrl: input.lemma.baseUrl }),
+    ...(input.lemma.fetch === undefined ? {} : { fetch: input.lemma.fetch }),
+  });
+  const trace = lemma.trace({
+    id: input.runId,
+    name: "rectify-recovery-agent",
+    input: input.redactedPrompt,
+    metadata,
+    threadId: input.caseId,
+    userId: input.organizationId,
+  });
+  return {
+    integration: vercelAI({ trace, agentName: "rectify-recovery-agent", metadata }),
+    traceId: trace.id,
+  };
+};
 
 const deliverTelemetry = async (
-  telemetry: VercelAITelemetryIntegration | null,
+  telemetry: LemmaTelemetry | null,
   result: unknown,
 ): Promise<AgentTurnResult["telemetry"]> => {
   if (telemetry === null) {
     return { status: "NOT_CONFIGURED", error: null };
   }
   try {
-    telemetry.recordResult(result);
-    await telemetry.flush();
-    await telemetry.shutdown();
+    telemetry.integration.recordResult(result);
+    await telemetry.integration.flush();
+    await telemetry.integration.shutdown();
     return { status: "DELIVERED", error: null };
   } catch (error: unknown) {
     const errors = [error instanceof Error ? error.message : "Lemma telemetry delivery failed"];
     try {
-      await telemetry.shutdown();
+      await telemetry.integration.shutdown();
     } catch (shutdownError: unknown) {
       errors.push(
         shutdownError instanceof Error ? shutdownError.message : "Lemma telemetry shutdown failed",
@@ -143,7 +164,7 @@ export const runBoundedAgentTurn = async (input: AgentTurnInput): Promise<AgentT
         : {
             telemetry: {
               functionId: "rectify-recovery-agent",
-              integrations: [adaptLemmaTelemetry(lemmaTelemetry)],
+              integrations: [adaptLemmaTelemetry(lemmaTelemetry.integration)],
             },
           }),
     });
@@ -154,11 +175,12 @@ export const runBoundedAgentTurn = async (input: AgentTurnInput): Promise<AgentT
       stopReason: budget.used >= AGENT_TOOL_CALL_LIMIT ? "TOOL_CALL_LIMIT" : "MODEL_FINISH",
       toolCallCount: budget.used,
       usage: result.usage,
+      traceId: lemmaTelemetry?.traceId ?? null,
       telemetry,
     };
   } catch (error: unknown) {
     if (lemmaTelemetry !== null) {
-      await closeFailedTelemetry(lemmaTelemetry, error);
+      await closeFailedTelemetry(lemmaTelemetry.integration, error);
     }
     if (error instanceof ToolBudgetExceededError) {
       throw error;

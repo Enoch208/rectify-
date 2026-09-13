@@ -52,10 +52,10 @@ Tests run the same harness with scripted models. They validate the harness and c
 - End-to-end pipeline test: the Northstar loop from complaint to completed synchronization passes with fixture providers, the real SQLite store, the real ReportDesk server and a scripted model.
 - Reliability tests pass: lost send reconciled after restart without resend, unresolvable send held, edited draft blocked, expired approval, missing model, ambiguous identity.
 - The three processes were started together locally with fixture providers: a queued investigation was processed by the worker and stopped for a human because no model was configured.
-- Live Gmail, GitHub and Slack: `NOT RUN`.
+- Live Gmail credential: authenticated by a read-only profile request with HTTP 200. The three-provider read/write smoke is `NOT RUN`; GitHub and Slack were not exercised live.
 - Real model walkthrough: passed with `gpt-5.4-mini-2026-03-17`, 10 tool calls in 21.691 seconds; the recorded Northstar case reached `RECOVERED` with synchronization `COMPLETE` using local fixture providers.
-- Openable Lemma trace: not verified; the recorded run's trace ID was null.
-- Final E01–E06 × 3 evaluation with a real model: `NOT RUN`.
+- Openable Lemma trace: not verified. A minimal SDK smoke reached Lemma with HTTP 201 and `enqueued`, but full 17-span agent uploads failed with `fetch failed` before acknowledgment.
+- Final E01–E06 × 3 evaluation: 16/18 independently checked fixture trials passed with `gpt-5.4-mini-2026-03-17`. E02 trial 3 and E05 trial 3 safely stopped in `NEEDS_HUMAN` after an action transition error; neither sent customer email nor produced a forbidden effect. [Artifacts and verdicts](../evals/results/real-model-2026-09-13/README.md) are committed.
 - Arga twins: `NOT RUN`.
 - Docker image build and three-process runtime smoke: passed locally, including case persistence across a container restart.
 

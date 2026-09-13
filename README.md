@@ -8,7 +8,7 @@
 
 Rectify is a recovery agent for B2B support teams. It connects a complaint in Gmail to engineering context in GitHub and Slack, verifies the customer’s actual workflow, gates communication behind human approval, and closes the loop only after the product observes the customer succeed.
 
-![tests](https://img.shields.io/badge/tests-92%20passing-2FA46A) ![integrations](https://img.shields.io/badge/external%20apps-Gmail%20%C2%B7%20GitHub%20%C2%B7%20Slack-5B8DEF) ![runtime](https://img.shields.io/badge/runtime-Node%2024-7BC043) ![demo](https://img.shields.io/badge/demo-2%3A00-E7B84B)
+![tests](https://img.shields.io/badge/tests-93%20passing-2FA46A) ![evals](https://img.shields.io/badge/real--model%20eval-16%2F18-E7B84B) ![integrations](https://img.shields.io/badge/external%20apps-Gmail%20%C2%B7%20GitHub%20%C2%B7%20Slack-5B8DEF) ![runtime](https://img.shields.io/badge/runtime-Node%2024-7BC043) ![demo](https://img.shields.io/badge/demo-2%3A00-E7B84B)
 
 **[Open the live app ↗](https://rectify-app-two.vercel.app)** · **[Watch the narrated demo ↗](https://enoch208.github.io/rectify-/demo/v2/)** · **[Download the MP4 ↗](https://enoch208.github.io/rectify-/demo/v2/rectify-demo.mp4)** · **[Read the system and reliability brief](docs/SYSTEM_AND_RELIABILITY.md)**
 
@@ -112,7 +112,7 @@ Each adapter has an explicit `live`, `arga`, or `local_fixture` mode. Missing cr
 | Identity maps to multiple tenants | Stop for operator clarification and persist the choice | E03 scenario |
 | “Fixed” issue still produces an empty export | Keep the failed evidence, hand off, and send nothing until a human fix and passing recheck | E02 scenario |
 
-The test suite currently passes **92 behavior-focused tests across eight workspaces**. E01–E06 drive the real store, worker, ReportDesk, approval binding, and fixture provider state. Their independent checker grades captured provider effects rather than trusting the agent or ledger.
+The test suite currently passes **93 behavior-focused tests across eight workspaces**. A separate real-model benchmark passed **16/18** independently checked trials. E01–E06 drive the real store, worker, ReportDesk, approval binding, and fixture provider state; the checker grades captured provider effects rather than trusting the agent or ledger.
 
 | Scenario | What must be demonstrated |
 |---|---|
@@ -128,7 +128,7 @@ The test suite currently passes **92 behavior-focused tests across eight workspa
 | Artifact | What it proves |
 |---|---|
 | [Recorded workflow evidence](docs/demo/v2/workflow-evidence.json) | Real-model run: 10 tool calls in 21.691 s; failed then passing export; seven confirmed actions; `RECOVERED` and sync `COMPLETE` |
-| [Independent evaluation manifest](evals/final-run-manifest.redacted.json) | The final 18-trial real-model benchmark is honestly marked `NOT_RUN`, including the missing prerequisites |
+| [Independent evaluation evidence](evals/results/real-model-2026-09-13/README.md) | `gpt-5.4-mini-2026-03-17` passed 16/18 trials; artifacts, hashes, verdicts and both safe-stop failures are published |
 | [System and reliability brief](docs/SYSTEM_AND_RELIABILITY.md) | Trust boundaries, state ownership, approval binding, reconciliation, recovery rules, and evaluation method |
 | [Video verification](docs/demo/v2/verification.json) | 120 s, 1920×1080, 30 fps, full decode and blank-frame checks passing |
 | [Editable demo source](video/README.md) | Capture, narration, captions, render, and reproduction details |
@@ -139,11 +139,11 @@ The test suite currently passes **92 behavior-focused tests across eight workspa
 |---|---|
 | Case store, durable job queue, action ledger, approvals, clarifications, API and operator workspace | Implemented and locally tested |
 | Full Northstar recovery loop | Recorded with a real model, real SQLite and ReportDesk, fixture Gmail/GitHub/Slack |
-| Gmail, GitHub, and Slack remote adapters plus reconciliation | Implemented and contract-tested; live credentials were not exercised in the recording |
-| E01–E06 harness and independent checker | Implemented; harness tests pass with scripted models, which is not a benchmark result |
+| Gmail, GitHub, and Slack remote adapters plus reconciliation | Implemented and contract-tested; refreshed Gmail credential authenticated with a live read, but the three-provider write smoke was not run |
+| E01–E06 harness and independent checker | 16/18 real-model fixture trials passed; the two incomplete trials safely stopped with no customer send or forbidden effects |
 | Docker image and three-process restart persistence | Built and runtime-smoked locally |
-| Openable Lemma trace | Not verified; the recorded run’s trace ID is null |
-| Final E01–E06 × 3 real-model evaluation, live-provider smoke, Arga twins | `NOT RUN` |
+| Openable Lemma trace | Not verified; a minimal ingest succeeded, but full agent trace uploads failed before Lemma acknowledged them |
+| Live-provider write smoke and Arga twins | `NOT RUN` |
 
 ## Run locally
 

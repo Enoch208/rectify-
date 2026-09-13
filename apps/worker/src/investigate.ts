@@ -79,7 +79,7 @@ export const runInvestigation = async (services: WorkerServices, caseId: string)
         result.telemetry.status === "FAILED"
           ? `${result.stopReason}; Lemma delivery failed: ${result.telemetry.error ?? "unknown"}`
           : result.stopReason,
-      traceId: null,
+      traceId: result.traceId,
     });
   } catch (error: unknown) {
     finishRun(services, run, {
@@ -88,7 +88,7 @@ export const runInvestigation = async (services: WorkerServices, caseId: string)
       inputTokens: null,
       outputTokens: null,
       stopReason: describeError(error),
-      traceId: null,
+      traceId: settings.lemma === null ? null : run.id,
     });
   }
   await finalizeCaseCheck(services, caseId);
