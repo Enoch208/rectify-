@@ -20,6 +20,16 @@ export const sourceLabel = {
   rectify: "Rectify",
 } as const satisfies Record<TimelineEntry["source"], string>;
 
+const actionTitle: Readonly<Record<string, string>> = {
+  CREATE_IMPACT_ISSUE: "Customer-impact issue",
+  POST_SLACK_HANDOFF: "Engineering handoff",
+  CREATE_CUSTOMER_DRAFT: "Customer draft",
+  POST_APPROVAL_REQUEST: "Approval request posted",
+  SEND_CUSTOMER_EMAIL: "Customer email",
+  COMMENT_RECOVERY: "Recovery comment",
+  POST_RECOVERY_UPDATE: "Recovery update",
+};
+
 const decisionTone = {
   PENDING: "attention",
   APPROVED: "done",
@@ -64,11 +74,11 @@ export function buildTimeline(response: GetCaseResponse): readonly TimelineEntry
       id: `action-${record.id}`,
       at: record.updatedAt,
       source: record.provider,
-      title: `${record.kind} · ${status.label}`,
+      title: `${actionTitle[record.kind] ?? record.kind} · ${status.label}`,
       detail: reason ?? `Attempts: ${String(record.attempts.length)}`,
       tone: status.tone,
-      environment: null,
-      href: null,
+      environment: response.environments[record.provider],
+      href: record.providerIds.find((id) => id.startsWith("https://")) ?? null,
     };
   });
 

@@ -16,7 +16,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "dev:local": "sh -c 'set -a; . ./.env; set +a; turbo run dev'",
-    "start:all": "node scripts/start-all.mjs"
+    "start:all": "node scripts/start-all.mjs",
+    "approve:local": "node scripts/approve-local.mjs"
   },
   "devDependencies": {
     "prettier": "3.9.6",
