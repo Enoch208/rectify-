@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import type { CaseRecord } from "@rectify/core";
-import { queuedJobResponseSchema } from "@/lib/api/command-schemas";
+import { queuedJobResponseSchema, type CaseRecord, type QueuedJobResponse } from "@rectify/core";
 import { describeFailure, postContract, type CommandResult } from "@/lib/api/contract";
 import { canInvestigate, canRecheck } from "@/lib/case-presentation";
 import { Panel } from "./panel";
 
 type Command = "investigate" | "recheck";
 
-function commandMessage(result: CommandResult<{ jobId: string }>): string {
+function commandMessage(result: CommandResult<QueuedJobResponse>): string {
   switch (result.kind) {
     case "accepted":
       return `Queued as job ${result.data.jobId}. The case updates when the worker records a result.`;

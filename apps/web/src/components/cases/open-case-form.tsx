@@ -2,8 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type SubmitEvent } from "react";
-import type { PostCaseRequest } from "@rectify/core";
-import { openCaseResponseSchema } from "@/lib/api/command-schemas";
+import { postCaseResponseSchema, type PostCaseRequest } from "@rectify/core";
 import { describeFailure, postContract } from "@/lib/api/contract";
 
 export function OpenCaseForm() {
@@ -17,7 +16,7 @@ export function OpenCaseForm() {
     const request: PostCaseRequest = { gmailThreadId: threadId.trim() };
     setPending(true);
     setMessage(null);
-    postContract("/api/cases", request, openCaseResponseSchema)
+    postContract("/api/cases", request, postCaseResponseSchema)
       .then(
         (result) => {
           switch (result.kind) {

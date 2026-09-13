@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SignOutButton } from "./sign-out-button";
 
 export function WorkspaceHeader() {
   return (
@@ -14,16 +15,19 @@ export function WorkspaceHeader() {
         </div>
       </div>
 
-      <div className="flex items-center self-start rounded-full border border-white/5 bg-white/[0.04] p-1 md:self-center">
-        <span className="rounded-full bg-white/10 px-5 py-1.5 text-xs font-medium text-white">
-          Workspace
-        </span>
-        <Link
-          href="/"
-          className="px-5 py-1.5 text-xs font-medium text-neutral-500 transition-colors hover:text-white"
-        >
-          Site
-        </Link>
+      <div className="flex flex-wrap items-center gap-3 self-start md:self-center">
+        <div className="flex items-center rounded-full border border-white/5 bg-white/[0.04] p-1">
+          <span className="rounded-full bg-white/10 px-5 py-1.5 text-xs font-medium text-white">
+            Workspace
+          </span>
+          <Link
+            href="/"
+            className="px-5 py-1.5 text-xs font-medium text-neutral-500 transition-colors hover:text-white"
+          >
+            Site
+          </Link>
+        </div>
+        <SignOutButton />
       </div>
     </header>
   );

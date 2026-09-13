@@ -64,16 +64,29 @@ export async function fetchContract<T>(
   return { kind: "ok", data: parsed.data };
 }
 
-export async function postContract<T>(
+export function postContract<T>(
+  path: string,
+  body: unknown,
+  schema: z.ZodType<T>,
+): Promise<CommandResult<T>> {
+  return sendContract("POST", path, body, schema);
+}
+
+export function deleteContract<T>(path: string, schema: z.ZodType<T>): Promise<CommandResult<T>> {
+  return sendContract("DELETE", path, null, schema);
+}
+
+async function sendContract<T>(
+  method: "POST" | "DELETE",
   path: string,
   body: unknown,
   schema: z.ZodType<T>,
 ): Promise<CommandResult<T>> {
   const response = await fetch(path, {
-    method: "POST",
+    method,
     credentials: "same-origin",
     headers: { accept: "application/json", "content-type": "application/json" },
-    body: JSON.stringify(body),
+    ...(body === null ? {} : { body: JSON.stringify(body) }),
   });
   if (response.status === 404 && !isJson(response)) {
     return { kind: "not-connected", path };
