@@ -10,11 +10,16 @@ Rectify is a recovery agent for B2B support teams. It connects a complaint in Gm
 
 ![tests](https://img.shields.io/badge/tests-93%20passing-2FA46A) ![evals](https://img.shields.io/badge/real--model%20eval-16%2F18-E7B84B) ![integrations](https://img.shields.io/badge/external%20apps-Gmail%20%C2%B7%20GitHub%20%C2%B7%20Slack-5B8DEF) ![runtime](https://img.shields.io/badge/runtime-Node%2024-7BC043) ![demo](https://img.shields.io/badge/demo-2%3A00-E7B84B)
 
-**[Open the live app ↗](https://rectify-app-two.vercel.app)** · **[Watch the narrated demo ↗](https://enoch208.github.io/rectify-/demo/v2/)** · **[Download the MP4 ↗](https://enoch208.github.io/rectify-/demo/v2/rectify-demo.mp4)** · **[Read the system and reliability brief](docs/SYSTEM_AND_RELIABILITY.md)**
+**[Open the live app ↗](https://rectify-app-two.vercel.app)** · **[Captions and transcript ↗](https://enoch208.github.io/rectify-/demo/v2/)** · **[Download the MP4 ↗](https://enoch208.github.io/rectify-/demo/v2/rectify-demo.mp4)** · **[Read the system and reliability brief](docs/SYSTEM_AND_RELIABILITY.md)**
 
 </div>
 
-[![Rectify’s two-minute product walkthrough](docs/demo/v2/poster.jpg)](https://enoch208.github.io/rectify-/demo/v2/)
+https://github.com/user-attachments/assets/44987a98-e08b-4768-b592-9ba8133996d7
+
+<video controls playsinline width="100%" poster="docs/demo/v2/poster.jpg" src="https://github.com/user-attachments/assets/44987a98-e08b-4768-b592-9ba8133996d7">
+<source src="https://github.com/user-attachments/assets/44987a98-e08b-4768-b592-9ba8133996d7" type="video/mp4">
+<source src="https://enoch208.github.io/rectify-/demo/v2/rectify-demo.mp4" type="video/mp4">
+</video>
 
 The demo follows Northstar Research. Its monthly CSV endpoint returns HTTP 200, its engineering issue is closed, and Slack says the rollout is complete—but the CSV has no records. Rectify detects the contradiction, creates a customer-impact issue, hands it to engineering, waits for a human-applied configuration fix, rechecks the same export, obtains approval for the exact email, sends it once, and observes the customer’s successful export before declaring recovery.
 
