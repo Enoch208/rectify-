@@ -36,6 +36,14 @@ export const postCaseRequestSchema = z.object({
   gmailThreadId: z.string().min(1),
 });
 
+export const postCaseResponseSchema = z.object({
+  case: caseRecordSchema,
+});
+
+export const queuedJobResponseSchema = z.object({
+  jobId: z.string().min(1),
+});
+
 export const getCaseResponseSchema = z.object({
   case: caseRecordSchema,
   environments: providerEnvironmentsSchema,
@@ -61,6 +69,8 @@ export const getRunResponseSchema = z.object({
 export type CaseSummary = z.infer<typeof caseSummarySchema>;
 export type GetCasesResponse = z.infer<typeof getCasesResponseSchema>;
 export type PostCaseRequest = z.infer<typeof postCaseRequestSchema>;
+export type PostCaseResponse = z.infer<typeof postCaseResponseSchema>;
+export type QueuedJobResponse = z.infer<typeof queuedJobResponseSchema>;
 export type GetCaseResponse = z.infer<typeof getCaseResponseSchema>;
 export type GetRunsResponse = z.infer<typeof getRunsResponseSchema>;
 export type GetRunResponse = z.infer<typeof getRunResponseSchema>;

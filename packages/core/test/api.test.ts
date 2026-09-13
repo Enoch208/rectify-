@@ -6,6 +6,8 @@ import {
   getRunResponseSchema,
   getRunsResponseSchema,
   postCaseRequestSchema,
+  postCaseResponseSchema,
+  queuedJobResponseSchema,
 } from "../src/index.ts";
 import {
   actionRecord,
@@ -59,6 +61,12 @@ void test("GET /api/cases/:id response accepts complete case data", () => {
 void test("POST /api/cases request requires a Gmail thread id", () => {
   assert.equal(postCaseRequestSchema.safeParse({ gmailThreadId: "thread-1" }).success, true);
   assert.equal(postCaseRequestSchema.safeParse({ gmailThreadId: "" }).success, false);
+});
+
+void test("command responses expose created cases and queued job IDs", () => {
+  assert.equal(postCaseResponseSchema.safeParse({ case: caseRecord }).success, true);
+  assert.equal(queuedJobResponseSchema.safeParse({ jobId: "job-1" }).success, true);
+  assert.equal(queuedJobResponseSchema.safeParse({ jobId: "" }).success, false);
 });
 
 void test("GET /api/runs response accepts observed runs", () => {

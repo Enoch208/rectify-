@@ -1,3 +1,4 @@
+import { queuedJobResponseSchema } from "@rectify/core";
 import { requireOperator } from "@/server/auth";
 import { requireEnvironment } from "@/server/config";
 import { errorResponse } from "@/server/errors";
@@ -9,7 +10,10 @@ export async function POST(request: Request, context: RouteContext<"/api/cases/[
     const { id } = await context.params;
     const repositories = openRepositories();
     try {
-      return Response.json({ jobId: repositories.cases.queue(id, "RECHECK") }, { status: 202 });
+      const response = queuedJobResponseSchema.parse({
+        jobId: repositories.cases.queue(id, "RECHECK"),
+      });
+      return Response.json(response, { status: 202 });
     } finally {
       repositories.close();
     }

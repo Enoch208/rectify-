@@ -1,4 +1,8 @@
-import { getCasesResponseSchema, postCaseRequestSchema } from "@rectify/core";
+import {
+  getCasesResponseSchema,
+  postCaseRequestSchema,
+  postCaseResponseSchema,
+} from "@rectify/core";
 import { requireOperator } from "@/server/auth";
 import { getIntakeDirectory, getProviderEnvironments, requireEnvironment } from "@/server/config";
 import { errorResponse, HttpError } from "@/server/errors";
@@ -34,7 +38,7 @@ export async function POST(request: Request) {
     const repositories = openRepositories();
     try {
       const record = repositories.cases.createOrResume(identity, getProviderEnvironments());
-      return Response.json({ case: record });
+      return Response.json(postCaseResponseSchema.parse({ case: record }));
     } finally {
       repositories.close();
     }
