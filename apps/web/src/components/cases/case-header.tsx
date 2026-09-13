@@ -1,6 +1,6 @@
-import type { GetCaseResponse, VerificationRecord } from "@rectify/core";
+import { providerSchema, type GetCaseResponse, type VerificationRecord } from "@rectify/core";
 import { caseStateStatus, nextAction } from "@/lib/case-presentation";
-import { evidenceEnvironments } from "@/lib/case-timeline";
+import { sourceLabel } from "@/lib/case-timeline";
 import { formatTime } from "@/lib/format";
 import { EnvironmentBadge } from "@/components/workspace/environment-badge";
 import { StatusPill } from "@/components/workspace/status-pill";
@@ -17,7 +17,6 @@ export function CaseHeader({
   const complaint = data.evidence.find(
     (entry) => entry.provider === "gmail" && entry.factKind === "REPORTED",
   );
-  const environments = evidenceEnvironments(data);
 
   return (
     <section className="flex flex-col gap-6 rounded-3xl border border-white/5 bg-[#0A0A0A] p-6">
@@ -35,14 +34,13 @@ export function CaseHeader({
               : "Complaint not retrieved yet."}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 md:justify-end">
-          {environments.length === 0 ? (
-            <EnvironmentBadge environment="NOT RUN" />
-          ) : (
-            environments.map((environment) => (
-              <EnvironmentBadge key={environment} environment={environment} />
-            ))
-          )}
+        <div className="flex flex-wrap gap-x-4 gap-y-2 md:justify-end">
+          {providerSchema.options.map((provider) => (
+            <span key={provider} className="flex items-center gap-1.5 text-[11px] text-neutral-500">
+              {sourceLabel[provider]}
+              <EnvironmentBadge environment={data.environments[provider]} />
+            </span>
+          ))}
         </div>
       </div>
 

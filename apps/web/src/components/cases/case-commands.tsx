@@ -2,18 +2,21 @@
 
 import { useState } from "react";
 import type { CaseRecord } from "@rectify/core";
-import { describeFailure, postCommand, type CommandResult } from "@/lib/api/contract";
+import { queuedJobResponseSchema } from "@/lib/api/command-schemas";
+import { describeFailure, postContract, type CommandResult } from "@/lib/api/contract";
 import { canInvestigate, canRecheck } from "@/lib/case-presentation";
 import { Panel } from "./panel";
 
 type Command = "investigate" | "recheck";
 
-function commandMessage(result: CommandResult): string {
+function commandMessage(result: CommandResult<{ jobId: string }>): string {
   switch (result.kind) {
     case "accepted":
-      return "Queued. The case updates when the worker records a result.";
+      return `Queued as job ${result.data.jobId}. The case updates when the worker records a result.`;
     case "not-connected":
       return `${result.path} is not available yet.`;
+    case "unauthorized":
+      return `Sign in required: ${result.message}`;
     case "rejected":
       return `Rejected (${String(result.status)}): ${result.message}`;
   }
@@ -26,7 +29,11 @@ export function CaseCommands({ record, onChanged }: { record: CaseRecord; onChan
   const run = (command: Command) => {
     setPending(command);
     setMessage(null);
-    postCommand(`/api/cases/${encodeURIComponent(record.id)}/${command}`)
+    postContract(
+      `/api/cases/${encodeURIComponent(record.id)}/${command}`,
+      {},
+      queuedJobResponseSchema,
+    )
       .then(
         (result) => {
           setMessage(commandMessage(result));

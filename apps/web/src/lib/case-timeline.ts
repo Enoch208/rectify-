@@ -98,7 +98,3 @@ export function buildTimeline(response: GetCaseResponse): readonly TimelineEntry
     (left, right) => Date.parse(left.at) - Date.parse(right.at),
   );
 }
-
-export function evidenceEnvironments(response: GetCaseResponse): readonly EnvironmentLabel[] {
-  return [...new Set(response.evidence.map((record) => record.environment))];
-}

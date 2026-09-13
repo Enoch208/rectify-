@@ -3,20 +3,14 @@
 import Link from "next/link";
 import { getRunResponseSchema, providerSchema, type GetRunResponse } from "@rectify/core";
 import { useContract } from "@/lib/api/use-contract";
-import { actionStateStatus, verificationStatus, type Status } from "@/lib/case-presentation";
+import { actionStateStatus, verificationStatus } from "@/lib/case-presentation";
 import { sourceLabel } from "@/lib/case-timeline";
 import { formatCount, formatDuration, formatTime } from "@/lib/format";
 import { Field, Panel } from "@/components/cases/panel";
 import { ContractView } from "@/components/workspace/contract-view";
 import { EnvironmentBadge } from "@/components/workspace/environment-badge";
 import { StatusPill } from "@/components/workspace/status-pill";
-
-const runStatus = {
-  RUNNING: { label: "Running", tone: "progress" },
-  SUCCEEDED: { label: "Succeeded", tone: "done" },
-  FAILED: { label: "Failed", tone: "blocked" },
-  STOPPED: { label: "Stopped", tone: "attention" },
-} as const satisfies Record<GetRunResponse["run"]["status"], Status>;
+import { runStatus } from "./run-status";
 
 export function RunDetail({ runId }: { runId: string }) {
   const { result } = useContract(`/api/runs/${encodeURIComponent(runId)}`, getRunResponseSchema);
