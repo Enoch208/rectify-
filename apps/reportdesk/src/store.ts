@@ -16,12 +16,33 @@ export interface ConfigAuditEvent {
   occurredAt: string;
 }
 
+export interface OutcomeDelivery {
+  eventId: string;
+  status: "DELIVERED" | "FAILED";
+  httpStatus: number | null;
+  error: string | null;
+  attemptedAt: string;
+}
+
+export class UnknownTenantError extends Error {
+  constructor(tenantId: string) {
+    super(`Unknown tenant: ${tenantId}`);
+    this.name = "UnknownTenantError";
+  }
+}
+
 export class ReportDeskStore {
   readonly #configs = new Map<string, TenantConfig>();
   readonly #auditEvents: ConfigAuditEvent[] = [];
   readonly #outcomeEvents = new Map<string, OutcomeEventRecord>();
+  readonly #deliveries: OutcomeDelivery[] = [];
 
   constructor(configs: readonly TenantConfig[]) {
+    this.#loadConfigs(configs);
+  }
+
+  #loadConfigs(configs: readonly TenantConfig[]): void {
+    this.#configs.clear();
     for (const config of configs) {
       this.#configs.set(config.tenantId, { ...config });
     }
@@ -30,9 +51,13 @@ export class ReportDeskStore {
   getConfig(tenantId: string): TenantConfig {
     const config = this.#configs.get(tenantId);
     if (config === undefined) {
-      throw new Error(`Unknown tenant: ${tenantId}`);
+      throw new UnknownTenantError(tenantId);
     }
     return { ...config };
+  }
+
+  getTenantIds(): string[] {
+    return [...this.#configs.keys()];
   }
 
   applyDemoFix(
@@ -40,15 +65,14 @@ export class ReportDeskStore {
     actorId: string,
     occurredAt: string,
     eventId: string,
-  ): TenantConfig {
+  ): { config: TenantConfig; auditEvent: ConfigAuditEvent } {
     const current = this.getConfig(tenantId);
     const updated = {
       ...current,
       fixedPathEnabled: true,
       revision: current.revision + 1,
     };
-    this.#configs.set(tenantId, updated);
-    this.#auditEvents.push({
+    const auditEvent: ConfigAuditEvent = {
       id: eventId,
       tenantId,
       kind: "HUMAN_APPLIED_DEMO_CONFIGURATION_FIX",
@@ -56,8 +80,10 @@ export class ReportDeskStore {
       fromRevision: current.revision,
       toRevision: updated.revision,
       occurredAt,
-    });
-    return { ...updated };
+    };
+    this.#configs.set(tenantId, updated);
+    this.#auditEvents.push(auditEvent);
+    return { config: { ...updated }, auditEvent: { ...auditEvent } };
   }
 
   getAuditEvents(): ConfigAuditEvent[] {
@@ -71,8 +97,27 @@ export class ReportDeskStore {
     this.#outcomeEvents.set(event.eventId, event);
   }
 
+  getOutcomeEvent(eventId: string): OutcomeEventRecord | undefined {
+    return this.#outcomeEvents.get(eventId);
+  }
+
   getOutcomeEvents(): OutcomeEventRecord[] {
     return [...this.#outcomeEvents.values()];
+  }
+
+  recordDelivery(delivery: OutcomeDelivery): void {
+    this.#deliveries.push({ ...delivery });
+  }
+
+  getDeliveries(): OutcomeDelivery[] {
+    return this.#deliveries.map((delivery) => ({ ...delivery }));
+  }
+
+  reset(configs: readonly TenantConfig[]): void {
+    this.#loadConfigs(configs);
+    this.#auditEvents.splice(0);
+    this.#outcomeEvents.clear();
+    this.#deliveries.splice(0);
   }
 }
 

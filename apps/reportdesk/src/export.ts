@@ -11,12 +11,20 @@ export interface ExportResponse {
   httpStatus: 200;
   contentType: "text/csv; charset=utf-8";
   body: string;
+  rowCount: number;
   requestId: string;
   tenantId: string;
   period: string;
   manifestRevision: number;
   appRevision: number;
   configRevision: number;
+}
+
+export class ExportNotFoundError extends Error {
+  constructor(tenantId: string, period: string) {
+    super(`No export for ${tenantId} in ${period}`);
+    this.name = "ExportNotFoundError";
+  }
 }
 
 const escapeCsv = (value: string): string => {
@@ -40,18 +48,19 @@ export const executeCsvExport = (
   request: ExportRequest,
   requestId: string = randomUUID(),
 ): ExportResponse => {
-  const config = store.getConfig(request.tenantId);
   const tenantFixture = manifest.tenants.find(
     (candidate) => candidate.tenantId === request.tenantId && candidate.period === request.period,
   );
-  if (tenantFixture === undefined) {
-    throw new Error(`No fixture for ${request.tenantId} in ${request.period}`);
+  if (tenantFixture === undefined || !store.getTenantIds().includes(request.tenantId)) {
+    throw new ExportNotFoundError(request.tenantId, request.period);
   }
+  const config = store.getConfig(request.tenantId);
   const rows = config.fixedPathEnabled ? tenantFixture.rows : [];
   return {
     httpStatus: 200,
     contentType: "text/csv; charset=utf-8",
     body: encodeExport(manifest.schema, rows),
+    rowCount: rows.length,
     requestId,
     tenantId: request.tenantId,
     period: request.period,

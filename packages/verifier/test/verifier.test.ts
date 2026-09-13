@@ -30,6 +30,7 @@ const reportDesk = () => {
     operatorId: "operator-1",
     customerSessions: [],
     outcomeSecret: "outcome-secret",
+    productEventsUrl: "http://127.0.0.1:9/unused",
   });
   return { store, server };
 };

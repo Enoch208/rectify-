@@ -10,6 +10,14 @@ const requiredEnvironment = (name: string): string => {
   return value;
 };
 
+const requiredUrl = (name: string): string => {
+  const value = requiredEnvironment(name);
+  if (!URL.canParse(value)) {
+    throw new Error(`${name} must be an absolute URL`);
+  }
+  return value;
+};
+
 const portValue = process.env.REPORTDESK_PORT ?? "3100";
 const port = Number.parseInt(portValue, 10);
 if (!Number.isSafeInteger(port) || port < 1 || port > 65_535) {
@@ -27,9 +35,11 @@ const server = createReportDeskServer({
       token: requiredEnvironment("REPORTDESK_CUSTOMER_TOKEN"),
       tenantId: "northstar",
       actorId: "maya",
+      displayName: "Northstar Research demo customer",
     },
   ],
   outcomeSecret: requiredEnvironment("REPORTDESK_OUTCOME_SECRET"),
+  productEventsUrl: requiredUrl("RECTIFY_PRODUCT_EVENTS_URL"),
 });
 
 server.listen(port);
