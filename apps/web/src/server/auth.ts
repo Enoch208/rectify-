@@ -9,8 +9,13 @@ const equal = (received: string, expected: string): boolean => {
   );
 };
 
-export const operatorTokenMatches = (received: string, expected: string): boolean =>
-  equal(received, expected);
+export const operatorTokenMatches = (received: string, configured: string): boolean =>
+  configured
+    .split(",")
+    .map((token) => token.trim())
+    .filter((token) => token.length > 0)
+    .map((token) => equal(received, token))
+    .includes(true);
 
 export const requireOperator = (request: Request, expectedToken: string): void => {
   const authorization = request.headers.get("authorization");
@@ -32,7 +37,7 @@ export const requireOperator = (request: Request, expectedToken: string): void =
   if (received === undefined) {
     throw new HttpError(401, "Operator authentication is required");
   }
-  if (!equal(received, expectedToken)) {
+  if (!operatorTokenMatches(received, expectedToken)) {
     throw new HttpError(401, "Operator credentials were rejected");
   }
 };
