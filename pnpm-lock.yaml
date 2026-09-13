@@ -15,6 +15,31 @@ importers:
         specifier: 2.10.12
         version: 2.10.12
 
+  apps/reportdesk:
+    dependencies:
+      '@rectify/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      zod:
+        specifier: 4.6.4
+        version: 4.6.4
+    devDependencies:
+      '@rectify/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@rectify/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/node':
+        specifier: 24.13.4
+        version: 24.13.4
+      eslint:
+        specifier: 9.39.5
+        version: 9.39.5(jiti@2.7.0)
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
   apps/web:
     dependencies:
       '@hugeicons/core-free-icons':
@@ -122,6 +147,34 @@ importers:
   packages/typescript-config: {}
 
   packages/ui: {}
+
+  packages/verifier:
+    dependencies:
+      '@rectify/core':
+        specifier: workspace:*
+        version: link:../core
+      zod:
+        specifier: 4.6.4
+        version: 4.6.4
+    devDependencies:
+      '@rectify/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@rectify/reportdesk':
+        specifier: workspace:*
+        version: link:../../apps/reportdesk
+      '@rectify/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 24.13.4
+        version: 24.13.4
+      eslint:
+        specifier: 9.39.5
+        version: 9.39.5(jiti@2.7.0)
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
 
 packages:
 

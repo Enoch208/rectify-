@@ -1,6 +1,14 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "stream",
+  "globalEnv": [
+    "REPORTDESK_CUSTOMER_TOKEN",
+    "REPORTDESK_OPERATOR_ID",
+    "REPORTDESK_OPERATOR_TOKEN",
+    "REPORTDESK_OUTCOME_SECRET",
+    "REPORTDESK_PORT",
+    "REPORTDESK_PROBE_TOKEN"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
