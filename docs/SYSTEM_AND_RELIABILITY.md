@@ -1,70 +1,63 @@
 # System and reliability brief
 
-## Workflow and responsibility
+## User and workflow
 
-Rectify starts from an operator-selected Gmail thread in a trusted intake directory. It records a case, gathers scoped evidence, verifies the affected tenant's `csv-export-v1` workflow, persists provider-write intent, waits for human changes or approval where required, and accepts recovery only from a signed ReportDesk customer outcome.
+The operator is a support engineer at a small B2B software company. A customer reports that a workflow is broken. Engineering may already have closed the related issue. Rectify's job is to check whether that customer's workflow works, carry any remaining failure to engineering, send the customer only a message a human approved for a verified state, and confirm recovery from the product rather than from anyone's narrative.
 
-The model may interpret untrusted content, select narrow read/check tools, and propose actions. Server policy owns tenant identity, recipient identity, state transitions, approval validity, write authorization, and recovery. Provider adapters execute typed reads and writes. The independent evaluator owns verdicts.
+The case state machine is `NEW → INVESTIGATING → WAITING_ENGINEERING → (recheck) → READY_FOR_APPROVAL → WAITING_CUSTOMER → RECOVERED`, with `NEEDS_HUMAN` reachable from any step with a reason and a resume point. Engineering state, latest verification, notification state, recovery and synchronization are separate fields, never inferred from the label.
 
-## Components
+## Model versus policy
 
-- `packages/core` contains browser-safe records and API schemas. Node-only SQLite, outcome signing, and send policy are explicit subpath exports.
-- `apps/reportdesk` contains tenant configuration revisions, one customer/probe export implementation, the authenticated human fix, audit records, and customer outcome signing.
-- `packages/verifier` executes the same export and compares exact manifest schema and values. Timeouts are inconclusive and a legitimate zero-row manifest passes.
-- `packages/providers` contains explicit `live`, `arga`, and `local_fixture` Gmail, GitHub, and Slack adapters. There is no mode fallback.
-- `apps/worker` persists action intent before writes, prevents duplicate logical effects, records ambiguous responses as `OUTCOME_UNKNOWN`, and reconciles after restart.
-- `packages/agent` limits a turn to 20 tool calls and 90 seconds using the installed AI SDK. Lemma delivery failure is surfaced without rewriting business state.
-- `apps/web/src/server` and `apps/web/src/app/api` contain SQLite case persistence, trusted intake, authenticated operator routes, state-guarded commands, Slack decisions, and signed product outcomes.
-- `evals` contains frozen E01–E06 definitions, the captured-state schema, an independent checker, and an 18-trial verdict writer.
+The model interprets untrusted content and chooses among narrow tools: read the case's own Gmail thread, list and read repository issues, select the matching issue, read the engineering Slack channel, run the export check, and propose an engineering handoff. Every tool is scoped to the active case and tenant. The model never writes provider content and cannot pick a tenant, recipient, repository, channel or approval.
 
-## State and evidence truth
+After the turn, server code decides the next state from stored evidence: no grounded issue or no check means `NEEDS_HUMAN`; a failed check requires a confirmed impact issue and Slack handoff before `WAITING_ENGINEERING`; an inconclusive check stops for a human; a passing check prepares a draft and an approval request. Rechecks are deterministic and do not call the model.
 
-Engineering state, workflow verification, notification state, customer recovery, and final synchronization remain separate fields. A closed issue, rollout claim, HTTP 200 response, passing probe, draft, send, email open, or link click cannot independently set recovery.
+Without model configuration an investigation stops for a human and says why. It never falls back to a scripted answer.
 
-`GET /api/cases`, case detail, run list, and run detail return only the shared Zod contracts. Unknown resources and rejected commands return JSON `{ "error": "..." }`. Investigate is accepted only from `NEW`; recheck is accepted only from `WAITING_ENGINEERING` or `NEEDS_HUMAN`. The transition and queued job are written in one SQLite transaction.
+## Provider actions
 
-## Identity and scope
+| Provider | Writes | Reconciliation after an ambiguous response |
+|---|---|---|
+| GitHub | Customer-impact issue on a failed check; recovery comment on the impact issue or matched issue | Exactly one issue or comment carrying the action marker |
+| Slack | Engineering handoff; approval request with Approve and Reject buttons; recovery reply in the handoff thread | Exactly one message carrying the action marker |
+| Gmail | Customer draft; send of the approved content | Draft with the `X-Rectify-Action` header; sent message found by its `Message-ID` |
 
-Case creation accepts only a Gmail thread ID already present in `RECTIFY_INTAKE_DIRECTORY_JSON`. Email text, names, signatures, and retrieved instructions cannot create tenant or recipient mappings. The agent receives no arbitrary HTTP, shell, database, or deployment tool.
-
-The operator session validates `RECTIFY_OPERATOR_TOKEN` in constant time and stores an HttpOnly, `SameSite=Strict` cookie. Bearer authentication is also accepted. Slack and ReportDesk callbacks use their own signed server boundaries rather than the operator cookie.
+Every write has a unique logical key and an immutable payload in the action ledger, and is recorded `DISPATCHING` before the provider call. A lost response becomes `OUTCOME_UNKNOWN`. On start and every 30 seconds the worker runs provider-specific reconcilers. Finding the effect confirms the original action; finding nothing is never treated as proof that nothing happened, so the action stays `OUTCOME_UNKNOWN` and the case waits for a human. Unambiguous confirmed failures of recovery updates retry under new logical keys, at most three times.
 
 ## Approval and customer send
 
-Slack verification hashes `v0:{timestamp}:{rawBody}`, enforces a five-minute timestamp window, and compares signatures in constant time before parsing the form body. A decision is then bound to the stored workspace, channel, message, allowlisted approver, nonce, and expiry. Replayed or already decided approvals are rejected.
+The approval request binds the case version, organization and tenant, send action version and payload hash, provider account, draft and thread, sender, the single trusted recipient, subject, body, stored MIME, business-field hash, verification, application and configuration revisions, policy version, Slack workspace, channel, message and nonce, and a five-minute expiry.
 
-The server-only customer-send policy additionally checks case and action versions, organization and tenant, provider account, draft and thread identity, sender, single allowlisted recipient, subject, body, stored MIME, business-field hash, a fresh passing verification, unchanged app/config revisions, unconsumed approval, and contradictory evidence. Authorization is a pre-dispatch decision; it is not a provider success claim.
+The Slack interaction is verified over the raw body with a five-minute timestamp window and a constant-time signature comparison, then bound to the stored workspace, channel, message, allowlisted approver and nonce. An already-decided approval is rejected.
 
-## Writes and uncertainty
+Before dispatch the worker re-reads the Gmail draft, the product's current configuration revision and the trusted directory, and the send policy checks every bound field plus a fresh matching passing verification and no later contradictory check. The approval is marked used in the same authorization step, and the worker sends the stored approved content rather than whatever the draft now contains. A changed draft, stale or expired approval, changed configuration or reused approval rejects the send and returns the case to a human. A rejected decision or an expired pending approval does the same.
 
-The action ledger uses a unique logical key and immutable intent trigger. The worker writes `DISPATCHING` before calling a provider. A lost or ambiguous response becomes `OUTCOME_UNKNOWN`; the worker does not blindly resend. Restart converts interrupted dispatches to unknown and runs provider-specific reconciliation. Confirmed failure and rejected authorization remain distinct states.
+## Recovery
 
-This reduces duplicate risk but does not claim atomic exactly-once behavior across SQLite and external providers.
+ReportDesk's customer page and Rectify's probe call the same export implementation. Only a customer session signs an outcome event, and ReportDesk delivers it to Rectify even if the export page is closed, recording each delivery attempt. Rectify accepts the event only with a valid signature, a customer actor, a fresh timestamp, the case's tenant, the latest passing verification's revisions, and a unique event ID. Recovery then moves synchronization to `PENDING`; the case becomes `COMPLETE` only after the GitHub and Slack recovery updates are confirmed.
 
-## Product recovery
+## Identity and scope
 
-ReportDesk customer and probe sessions call the same export implementation. Only customer sessions sign outcome events. The web callback verifies the HMAC, customer actor, event freshness, case/tenant, workflow, latest passing verification, and manifest/app/config revisions. Event IDs are unique. A valid successful event marks recovery observed while final provider synchronization remains pending.
+A case opens only for a Gmail thread in the trusted intake directory. A thread that maps to more than one tenant returns the candidates and requires an operator choice, which is recorded and reused. Operator routes require a constant-time checked token via an HttpOnly, `SameSite=Strict` session cookie or bearer header. ReportDesk and Slack callbacks use their own signed boundaries.
 
-## Evaluation
+## Evaluation method
 
-The checker reads captured records and provider effects outside the agent path. Common checks cover forbidden effects, tenant access, evidence support, environment labels, logical deduplication, confirmed effects, exact approval correspondence, passing verification, and signed recovery.
+The scenario runner creates a fresh store, fixture providers and ReportDesk for every trial, drives E01–E06 through the real worker loop, approval binding and customer export, and captures the resulting provider effects from provider state rather than from the ledger or the agent. The independent checker grades forbidden effects, tenant scope, evidence support, deduplication, confirmed effects, approval correspondence, verification truth, signed recovery, and scenario outcomes: distractors (E01), failure then human fix before send (E02), operator clarification (E03), injected instructions (E04), reconcilable and unresolvable lost responses without resend (E05), and rejected duplicate and edited approvals with exactly one send (E06).
 
-Scenario checks cover distractors and completion (E01), failure plus human fix ordering (E02), authoritative identity clarification (E03), injected source content with preserved scope (E04), reconcilable and intentionally unresolvable lost-response branches without resend (E05), and rejected duplicate plus stale/edited approvals with one authorized send (E06).
+Tests run the same harness with scripted models. They validate the harness and checker; they are not benchmark results. The runner refuses to produce artifacts without a real model.
 
-Unit tests create temporary `LOCAL FIXTURE` artifacts to validate checker behavior and the 18-file runner. They are not benchmark results. Real verdicts require independently captured state, an evaluator-only outcome secret, and three frozen trials for every scenario.
+## Verification status
 
-## Verification status on 2026-09-13
+- Lint, typecheck, unit and integration tests, and the web build pass locally on the committed code.
+- End-to-end pipeline test: the Northstar loop from complaint to completed synchronization passes with fixture providers, the real SQLite store, the real ReportDesk server and a scripted model.
+- Reliability tests pass: lost send reconciled after restart without resend, unresolvable send held, edited draft blocked, expired approval, missing model, ambiguous identity.
+- The three processes were started together locally with fixture providers: a queued investigation was processed by the worker and stopped for a human because no model was configured.
+- Live Gmail, GitHub and Slack: `NOT RUN`.
+- Real model investigation turn and openable Lemma trace: `NOT RUN`.
+- Final E01–E06 × 3 evaluation with a real model: `NOT RUN`.
+- Arga twins: `NOT RUN`.
+- Docker image build: not verified.
 
-- `pnpm lint`: passed locally.
-- `pnpm typecheck`: passed locally.
-- `pnpm test`: passed locally.
-- `node --test apps/web/src/server/*.test.ts`: passed locally.
-- `pnpm build`: passed locally.
-- `pnpm smoke:providers` with all modes `local_fixture`: passed and printed `LOCAL FIXTURE` for all reads and writes.
-- Live Gmail/GitHub/Slack provider smoke: `NOT RUN`, credentials and controlled IDs absent.
-- Real OpenAI/Lemma traced turn: `NOT RUN`, model and Lemma configuration absent.
-- E01–E06 final 18-trial suite: `NOT RUN`, captured artifacts and evaluator outcome secret absent.
+## Known limitations
 
-## Operational limitations
-
-The worker library is restart-safe for persisted actions, but a daemon consuming the API's `case_jobs` table is not implemented. Provider reconciler coverage must be supplied for every production write kind. The current demo uses one organization, one mailbox, one repository, one Slack workspace, and a controlled fixture manifest. SQLite deployment requires one persistent host. No live integration, trace, or evaluation metric should be published until its corresponding command completes against controlled external state.
+One workflow, organization, mailbox, repository and Slack channel. ReportDesk keeps configuration in memory. Reconciliation windows are bounded (50 issues, 100 comments, 100 Slack messages); anything outside stays held for a human. The scenario runner resets only fixture providers. SQLite requires a single persistent host shared by the web app and the worker. None of this is a claim of exactly-once delivery across SQLite and external providers, arbitrary-product verification, or universal prompt-injection resistance.
