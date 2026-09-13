@@ -20,7 +20,7 @@ export function SiteNav() {
   return (
     <div className="animate-on-scroll [animation:fadeInUp_0.8s_ease-out_0s_both] animate fixed top-6 right-0 left-0 z-50 flex justify-center px-6">
       <nav className="flex w-full max-w-5xl items-center justify-between rounded-full border border-white/5 bg-[#050505]/80 p-2 pl-6 shadow-2xl ring-1 ring-white/5 backdrop-blur-xl">
-        <SiteLogo />
+        <SiteLogo preload />
 
         <div className="hidden items-center gap-6 text-xs font-medium text-neutral-400 md:flex">
           {navLinks.map(({ label, href }) => (

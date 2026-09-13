@@ -16,7 +16,7 @@
   --color-accent-200: #bccfff;
   --color-accent-300: #93b0ff;
   --color-accent-400: #6d91ff;
-  --color-accent-500: #4d7cff;
+  --color-accent-500: #4275fe;
   --color-accent-600: #3560f0;
   --color-accent-700: #2a4bd1;
   --color-accent-800: #263fa8;
@@ -44,8 +44,8 @@
   :root {
     --bg-dark: #020202;
     --bg-card: #0a0a0a;
-    --accent: #4d7cff;
-    --accent-glow: rgba(77, 124, 255, 0.16);
+    --accent: #4275fe;
+    --accent-glow: rgba(66, 117, 254, 0.16);
   }
 
   body {
