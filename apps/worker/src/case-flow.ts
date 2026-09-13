@@ -43,22 +43,30 @@ export const intentFromAction = (action: ActionRecord): ActionIntent => ({
   payload: action.payload,
 });
 
-export const executeOnce = async (
+const inFlightActions = new Map<string, Promise<ActionRecord>>();
+
+export const executeOnce = (
   services: WorkerServices,
   intent: () => ActionIntent,
   authorize: ActionAuthorizer,
   execute: ActionExecutor,
   logicalKey: string,
 ): Promise<ActionRecord> => {
+  const running = inFlightActions.get(logicalKey);
+  if (running !== undefined) {
+    return running;
+  }
   const existing = services.store.ledger.getByLogicalKey(logicalKey);
   if (existing !== null && existing.status !== "PLANNED") {
-    return existing;
+    return Promise.resolve(existing);
   }
-  return services.actions.execute(
-    existing === null ? intent() : intentFromAction(existing),
-    authorize,
-    execute,
-  );
+  const execution = services.actions
+    .execute(existing === null ? intent() : intentFromAction(existing), authorize, execute)
+    .finally(() => {
+      inFlightActions.delete(logicalKey);
+    });
+  inFlightActions.set(logicalKey, execution);
+  return execution;
 };
 
 export const allowed = { authorized: true } as const;
