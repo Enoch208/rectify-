@@ -24,7 +24,7 @@ The recording uses the actual application and a real investigation model. Gmail,
 
 | Surface | Link | Notes |
 |---|---|---|
-| Rectify site and operator workspace | [rectify-app-two.vercel.app](https://rectify-app-two.vercel.app) | Served by Vercel; every `/api` request is forwarded to the backend host. The workspace requires an operator token. |
+| Rectify site and operator workspace | [rectify-app-two.vercel.app](https://rectify-app-two.vercel.app) | Served by Vercel; every `/api` request is forwarded to the backend host. The workspace requires an operator token; a separate, revocable judge token is provided privately with the submission. |
 | Backend API | [rectify-api.truematchx.com](https://rectify-api.truematchx.com) | Case API, SQLite store, worker and ReportDesk in one container behind an HTTPS tunnel, with no ports exposed publicly. Runs the real investigation model; Gmail, GitHub, Slack and ReportDesk are labelled `LOCAL FIXTURE`. |
 | ReportDesk demo product | [Operator fix page](https://rectify-desk.truematchx.com/operator) · customer export page linked from each approved email | Demo-only pages protected by their own tokens. |
 
