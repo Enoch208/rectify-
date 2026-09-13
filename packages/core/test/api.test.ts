@@ -4,6 +4,8 @@ import {
   getCaseResponseSchema,
   getCasesResponseSchema,
   getRunResponseSchema,
+  getRunsResponseSchema,
+  postCaseRequestSchema,
 } from "../src/index.ts";
 import {
   actionRecord,
@@ -43,12 +45,24 @@ void test("GET /api/cases response accepts a case summary", () => {
 void test("GET /api/cases/:id response accepts complete case data", () => {
   const result = getCaseResponseSchema.safeParse({
     case: caseRecord,
+    environments: runRecord.environments,
     evidence: [evidenceRecord],
     verifications: [verificationRecord],
     actions: [actionRecord],
     approvals: [approvalRecord],
     outcomeEvents: [outcomeEventRecord],
   });
+
+  assert.equal(result.success, true);
+});
+
+void test("POST /api/cases request requires a Gmail thread id", () => {
+  assert.equal(postCaseRequestSchema.safeParse({ gmailThreadId: "thread-1" }).success, true);
+  assert.equal(postCaseRequestSchema.safeParse({ gmailThreadId: "" }).success, false);
+});
+
+void test("GET /api/runs response accepts observed runs", () => {
+  const result = getRunsResponseSchema.safeParse({ runs: [runRecord], nextCursor: null });
 
   assert.equal(result.success, true);
 });

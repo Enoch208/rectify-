@@ -1,4 +1,5 @@
-import type { ActionIntent, ActionLedger, ActionRecord } from "@rectify/core";
+import type { ActionRecord } from "@rectify/core";
+import type { ActionIntent, ActionLedger } from "@rectify/core/ledger";
 
 export class ConfirmedActionFailure extends Error {
   constructor(message: string) {

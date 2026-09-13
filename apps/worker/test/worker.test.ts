@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { ActionLedger } from "@rectify/core";
+import { ActionLedger } from "@rectify/core/ledger";
 import { ActionWorker } from "../src/index.ts";
 
 const createFixture = () => {

@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { ActionLedger, ActionTransitionError, LogicalActionConflictError } from "../src/index.ts";
+import { ActionLedger, ActionTransitionError, LogicalActionConflictError } from "../src/ledger.ts";
 
 const createLedger = () => {
   const directory = mkdtempSync(join(tmpdir(), "rectify-ledger-"));
