@@ -1,4 +1,5 @@
 import { DatabaseIcon, LockIcon, SecurityCheckIcon, UserIcon } from "@hugeicons/core-free-icons";
+import Image from "next/image";
 import { FeatureCard, type Feature } from "./feature-card";
 import { SectionHeading } from "./section-heading";
 
@@ -40,10 +41,26 @@ export function Guardrails() {
         title="The model proposes. Policy decides."
         description="The agent searches, compares evidence and drafts. Server-side policy authorizes every action, and observed evidence is the only thing that changes a case."
       />
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {guardrails.map((guardrail) => (
-          <FeatureCard key={guardrail.title} feature={guardrail} />
-        ))}
+      <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="animate-on-scroll [animation:fadeInUp_0.8s_ease-out_0.25s_both] animate relative min-h-80 overflow-hidden bg-[#050505] lg:min-h-full">
+          <Image
+            src="/images/landing/approval-binding.webp"
+            alt="A customer message passing through a single protected approval path"
+            fill
+            sizes="(max-width: 1024px) 100vw, 45vw"
+            className="object-cover object-center"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10" />
+          <div className="absolute right-5 bottom-5 left-5 flex items-end justify-between gap-6 text-[10px] tracking-[0.18em] text-white/60 uppercase md:right-7 md:bottom-7 md:left-7">
+            <span>03 · Approval binding</span>
+            <span className="max-w-40 text-right">One exact message</span>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {guardrails.map((guardrail) => (
+            <FeatureCard key={guardrail.title} feature={guardrail} />
+          ))}
+        </div>
       </div>
     </section>
   );
