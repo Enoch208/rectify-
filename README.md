@@ -18,7 +18,7 @@ The demo product is ReportDesk. A customer at Northstar Research reports an empt
 | Real model investigation turn and openable Lemma trace | `NOT RUN` until `OPENAI_API_KEY`, `RECTIFY_MODEL_ID` and Lemma keys are supplied |
 | Final 18-trial evaluation with a real model | `NOT RUN` |
 | Arga twins | `NOT RUN` |
-| Docker image build | Not verified |
+| Docker deployment | Built and runtime-smoked locally with all three processes and persistent SQLite restart state |
 
 Fixture-backed results are labelled `LOCAL FIXTURE` everywhere they appear and are never presented as live provider results.
 

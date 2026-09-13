@@ -56,7 +56,7 @@ Tests run the same harness with scripted models. They validate the harness and c
 - Real model investigation turn and openable Lemma trace: `NOT RUN`.
 - Final E01–E06 × 3 evaluation with a real model: `NOT RUN`.
 - Arga twins: `NOT RUN`.
-- Docker image build: not verified.
+- Docker image build and three-process runtime smoke: passed locally, including case persistence across a container restart.
 
 ## Known limitations
 
