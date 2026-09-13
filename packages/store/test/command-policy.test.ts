@@ -4,10 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import type { CaseState } from "@rectify/core";
-import { CaseRepository } from "./case-repository.ts";
-import { HttpError } from "./errors.ts";
-import { RecordRepository } from "./record-repository.ts";
-import { environments, identity, now } from "./server-test-fixtures.ts";
+import { openStore, StatusError as HttpError } from "../src/index.ts";
+import { environments, identity, now } from "./fixtures.ts";
 
 const withDatabase = (operation: (path: string) => void): void => {
   const directory = mkdtempSync(join(tmpdir(), "rectify-command-"));
@@ -20,7 +18,8 @@ const withDatabase = (operation: (path: string) => void): void => {
 
 void test("investigate is accepted only from NEW and intake resumes by thread", () => {
   withDatabase((path) => {
-    const cases = new CaseRepository({ path, now: () => now, createId: () => "id-1" });
+    const store = openStore({ path, now: () => now, createId: () => "id-1" });
+    const cases = store.cases;
     try {
       const record = cases.createOrResume(identity, environments);
       assert.equal(cases.createOrResume(identity, environments).id, record.id);
@@ -28,7 +27,7 @@ void test("investigate is accepted only from NEW and intake resumes by thread", 
       assert.equal(cases.getCase(record.id).state, "INVESTIGATING");
       assert.throws(() => cases.queue(record.id, "INVESTIGATE"), HttpError);
     } finally {
-      cases.close();
+      store.close();
     }
   });
 });
@@ -39,8 +38,8 @@ for (const state of [
 ] as const satisfies readonly CaseState[]) {
   void test(`recheck is accepted from ${state}`, () => {
     withDatabase((path) => {
-      const cases = new CaseRepository({ path, now: () => now, createId: () => "id-1" });
-      const records = new RecordRepository(path);
+      const store = openStore({ path, now: () => now, createId: () => "id-1" });
+      const { cases, records } = store;
       try {
         const record = cases.createOrResume(identity, environments);
         records.saveCase({
@@ -52,8 +51,7 @@ for (const state of [
         cases.queue(record.id, "RECHECK");
         assert.equal(cases.getCase(record.id).state, "INVESTIGATING");
       } finally {
-        records.close();
-        cases.close();
+        store.close();
       }
     });
   });
@@ -61,13 +59,14 @@ for (const state of [
 
 void test("recheck rejects NEW and unknown cases", () => {
   withDatabase((path) => {
-    const cases = new CaseRepository({ path, now: () => now, createId: () => "id-1" });
+    const store = openStore({ path, now: () => now, createId: () => "id-1" });
+    const cases = store.cases;
     try {
       const record = cases.createOrResume(identity, environments);
       assert.throws(() => cases.queue(record.id, "RECHECK"), HttpError);
       assert.throws(() => cases.queue("unknown", "RECHECK"), HttpError);
     } finally {
-      cases.close();
+      store.close();
     }
   });
 });

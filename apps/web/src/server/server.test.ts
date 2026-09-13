@@ -5,12 +5,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { signOutcomeEvent } from "@rectify/core/outcomes";
-import { ApprovalRepository } from "./approval-repository.ts";
 import { requireOperator } from "./auth.ts";
-import { CaseRepository } from "./case-repository.ts";
+import { openStore } from "@rectify/store";
 import { HttpError, errorResponse } from "./errors.ts";
 import { acceptCustomerOutcome } from "./outcome-events.ts";
-import { RecordRepository } from "./record-repository.ts";
 import { bindSlackDecision, parseSlackDecision, verifySlackRequest } from "./slack-approval.ts";
 import {
   approval,
@@ -89,19 +87,18 @@ void test("Slack approval binds signature, timestamp, approver, provenance, nonc
 
 void test("only a fresh signed customer outcome matching a passing revision records recovery", () => {
   withDatabase((path) => {
-    const cases = new CaseRepository({ path, now: () => now, createId: () => "case-1" });
-    const records = new RecordRepository(path);
+    const store = openStore({ path, now: () => now, createId: () => "case-1" });
     try {
-      const created = cases.createOrResume(identity, environments);
-      records.saveVerification(passingVerification(created.id));
-      records.saveCase(waitingCustomerCase(created));
+      const created = store.cases.createOrResume(identity, environments);
+      store.records.saveVerification(passingVerification(created.id));
+      store.records.saveCase(waitingCustomerCase(created));
       const event = signOutcomeEvent(unsignedOutcome(created.id), "secret");
       assert.throws(
         () =>
           acceptCustomerOutcome(
             signOutcomeEvent({ ...unsignedOutcome(created.id), tenantId: "other" }, "secret"),
             "secret",
-            cases,
+            store,
             now,
           ),
         HttpError,
@@ -111,7 +108,7 @@ void test("only a fresh signed customer outcome matching a passing revision reco
           acceptCustomerOutcome(
             signOutcomeEvent({ ...unsignedOutcome(created.id), actorType: "PROBE" }, "secret"),
             "secret",
-            cases,
+            store,
             now,
           ),
         HttpError,
@@ -121,7 +118,7 @@ void test("only a fresh signed customer outcome matching a passing revision reco
           acceptCustomerOutcome(
             signOutcomeEvent({ ...unsignedOutcome(created.id), configRevision: 3 }, "secret"),
             "secret",
-            cases,
+            store,
             now,
           ),
         HttpError,
@@ -132,17 +129,17 @@ void test("only a fresh signed customer outcome matching a passing revision reco
           acceptCustomerOutcome(
             signOutcomeEvent({ ...unsignedOutcome(created.id), occurredAt: staleAt }, "secret"),
             "secret",
-            cases,
+            store,
             now,
           ),
         HttpError,
       );
-      acceptCustomerOutcome(event, "secret", cases, now);
-      assert.equal(cases.getCase(created.id).recoveryState, "OBSERVED");
-      assert.throws(() => acceptCustomerOutcome(event, "secret", cases, now), HttpError);
+      acceptCustomerOutcome(event, "secret", store, now);
+      assert.equal(store.cases.getCase(created.id).recoveryState, "OBSERVED");
+      assert.equal(store.cases.getCase(created.id).syncState, "PENDING");
+      assert.throws(() => acceptCustomerOutcome(event, "secret", store, now), HttpError);
     } finally {
-      records.close();
-      cases.close();
+      store.close();
     }
   });
 });
@@ -179,15 +176,15 @@ void test("operator authentication accepts bearer and encoded same-origin cookie
 
 void test("approval persistence retains the bound decision", () => {
   withDatabase((path) => {
-    const cases = new CaseRepository({ path, now: () => now, createId: () => "case-1" });
-    const approvals = new ApprovalRepository(path);
+    const store = openStore({ path, now: () => now, createId: () => "case-1" });
     try {
-      cases.createOrResume(identity, environments);
-      approvals.save(approval);
-      assert.equal(approvals.get(approval.id).nonce, approval.nonce);
+      store.cases.createOrResume(identity, environments);
+      store.approvals.save(approval);
+      assert.equal(store.approvals.get(approval.id).nonce, approval.nonce);
+      store.approvals.consume(approval.id);
+      assert.throws(() => store.approvals.consume(approval.id), HttpError);
     } finally {
-      approvals.close();
-      cases.close();
+      store.close();
     }
   });
 });

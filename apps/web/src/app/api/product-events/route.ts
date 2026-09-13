@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       const event = acceptCustomerOutcome(
         body,
         requireEnvironment("REPORTDESK_OUTCOME_SECRET"),
-        repositories.cases,
+        repositories,
         new Date(),
       );
       return Response.json({ eventId: event.eventId, accepted: true });

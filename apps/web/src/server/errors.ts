@@ -1,15 +1,9 @@
-export class HttpError extends Error {
-  readonly status: number;
+import { StatusError } from "@rectify/store";
 
-  constructor(status: number, message: string) {
-    super(message);
-    this.name = "HttpError";
-    this.status = status;
-  }
-}
+export { StatusError as HttpError };
 
 export const errorResponse = (error: unknown): Response => {
-  if (error instanceof HttpError) {
+  if (error instanceof StatusError) {
     return Response.json({ error: error.message }, { status: error.status });
   }
   return Response.json({ error: "Internal server error" }, { status: 500 });

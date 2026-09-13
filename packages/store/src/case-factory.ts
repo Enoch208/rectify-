@@ -1,5 +1,5 @@
 import { caseRecordSchema, type CaseRecord } from "@rectify/core";
-import type { IntakeEntry } from "./config.ts";
+import type { IntakeEntry } from "./intake.ts";
 
 export const createCaseRecord = (
   identity: IntakeEntry,
