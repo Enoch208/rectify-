@@ -64,6 +64,8 @@ export const waitingCustomerCase = (record: CaseRecord): CaseRecord => ({
 export const approval: ApprovalRecord = {
   id: "approval-1",
   caseId: "case-1",
+  organizationId: "org-1",
+  tenantId: "northstar",
   caseVersion: 1,
   actionId: "action-1",
   actionVersion: 1,

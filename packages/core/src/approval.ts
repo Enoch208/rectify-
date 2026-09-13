@@ -6,6 +6,8 @@ export const approvalDecisionSchema = z.enum(["PENDING", "APPROVED", "REJECTED",
 export const approvalRecordSchema = z.object({
   id: identifierSchema,
   caseId: identifierSchema,
+  organizationId: identifierSchema,
+  tenantId: identifierSchema,
   caseVersion: z.number().int().nonnegative(),
   actionId: identifierSchema,
   actionVersion: z.number().int().positive(),

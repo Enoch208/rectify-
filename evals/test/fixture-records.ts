@@ -111,6 +111,8 @@ export const verification = (
 export const approvalRecord: ApprovalRecord = {
   id: "approval-1",
   caseId: "case-1",
+  organizationId: "org-1",
+  tenantId: "northstar",
   caseVersion: 5,
   actionId: "action-gmail",
   actionVersion: 1,

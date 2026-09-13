@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./ledger": "./src/ledger.ts",
-    "./outcomes": "./src/outcome-signing.ts"
+    "./outcomes": "./src/outcome-signing.ts",
+    "./policy": "./src/send-policy.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
