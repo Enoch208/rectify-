@@ -1,0 +1,15 @@
+Command: pnpm smoke:providers (GMAIL_MODE=live GITHUB_MODE=live SLACK_MODE=live)
+Code: commit 506f518 plus the read-back change committed with this file
+Redaction: no credentials appear in this output; mailbox addresses are not printed
+
+Rectify provider smoke 2026-09-13T22:43:01.859Z correlation 1d8f2b61-5010-42e0-b749-7e11e20674d6
+Gmail [LIVE PROVIDER] read thread 1a09c9988712b4fc
+Gmail [LIVE PROVIDER] created draft r3084834358687440828
+Gmail [LIVE PROVIDER] read back draft r3084834358687440828 containing the correlation
+GitHub [LIVE PROVIDER] read issue 1
+GitHub [LIVE PROVIDER] created issue 4 at https://github.com/Enoch208/reportdesk-app/issues/4
+GitHub [LIVE PROVIDER] read back issue 4 containing the correlation
+Slack [LIVE PROVIDER] read 1 message
+Slack [LIVE PROVIDER] posted message 1789339386.796149
+Slack [LIVE PROVIDER] read back message 1789339386.796149 containing the correlation
+Provider smoke passed: read, write and read-back confirmed for every provider
