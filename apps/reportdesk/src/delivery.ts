@@ -47,11 +47,7 @@ export const deliverOutcomeEvent = async (
   desk: ReportDeskContext,
   event: OutcomeEventRecord,
 ): Promise<OutcomeDelivery> => {
-  const delivery = await attemptDelivery(
-    desk.productEventsUrl,
-    event,
-    desk.now().toISOString(),
-  );
+  const delivery = await attemptDelivery(desk.productEventsUrl, event, desk.now().toISOString());
   desk.store.recordDelivery(delivery);
   return delivery;
 };

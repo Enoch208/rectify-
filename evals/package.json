@@ -8,6 +8,7 @@
   },
   "scripts": {
     "eval": "node src/cli.ts",
+    "run-scenarios": "node src/run-cli.ts",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test": "node --test test/*.test.ts"
@@ -20,7 +21,13 @@
     "typescript": "5.9.3"
   },
   "dependencies": {
+    "@rectify/agent": "workspace:*",
     "@rectify/core": "workspace:*",
+    "@rectify/providers": "workspace:*",
+    "@rectify/reportdesk": "workspace:*",
+    "@rectify/store": "workspace:*",
+    "@rectify/worker": "workspace:*",
+    "ai": "7.0.99",
     "zod": "4.6.4"
   }
 }

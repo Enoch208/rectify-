@@ -17,7 +17,10 @@ const probeExport: Route = {
       return;
     }
     const input = await readJsonBody(context.request, probeExportRequestSchema);
-    sendExport(context.response, executeCsvExport(desk.store, desk.manifest, input, desk.createId()));
+    sendExport(
+      context.response,
+      executeCsvExport(desk.store, desk.manifest, input, desk.createId()),
+    );
   },
 };
 

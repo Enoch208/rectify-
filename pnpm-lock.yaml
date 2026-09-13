@@ -146,9 +146,27 @@ importers:
 
   evals:
     dependencies:
+      '@rectify/agent':
+        specifier: workspace:*
+        version: link:../packages/agent
       '@rectify/core':
         specifier: workspace:*
         version: link:../packages/core
+      '@rectify/providers':
+        specifier: workspace:*
+        version: link:../packages/providers
+      '@rectify/reportdesk':
+        specifier: workspace:*
+        version: link:../apps/reportdesk
+      '@rectify/store':
+        specifier: workspace:*
+        version: link:../packages/store
+      '@rectify/worker':
+        specifier: workspace:*
+        version: link:../apps/worker
+      ai:
+        specifier: 7.0.99
+        version: 7.0.99(zod@4.6.4)
       zod:
         specifier: 4.6.4
         version: 4.6.4

@@ -11,7 +11,12 @@ import { UnknownTenantError } from "./store.ts";
 
 export type { CustomerSession, ReportDeskServerOptions } from "./context.ts";
 
-const routes: readonly Route[] = [...probeRoutes, ...customerRoutes, ...operatorRoutes, ...pageRoutes];
+const routes: readonly Route[] = [
+  ...probeRoutes,
+  ...customerRoutes,
+  ...operatorRoutes,
+  ...pageRoutes,
+];
 
 const errorStatus = (error: unknown): number => {
   if (error instanceof HttpError) {

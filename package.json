@@ -12,6 +12,7 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "eval": "pnpm --filter @rectify/evals eval",
+    "eval:run": "pnpm --filter @rectify/evals run-scenarios",
     "smoke:providers": "pnpm --filter @rectify/providers smoke",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
