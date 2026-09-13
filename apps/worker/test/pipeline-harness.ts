@@ -6,7 +6,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { outcomeEventRecordSchema } from "@rectify/core";
 import { verifyOutcomeEvent } from "@rectify/core/outcomes";
-import { FixtureGitHubAdapter, FixtureGmailAdapter, FixtureSlackAdapter } from "@rectify/providers";
+import {
+  FixtureGitHubAdapter,
+  FixtureGmailAdapter,
+  FixtureSlackAdapter,
+  type GmailAdapter,
+} from "@rectify/providers";
 import {
   createReportDeskServer,
   fixtureManifest,
@@ -40,7 +45,15 @@ const listen = async (server: Server): Promise<string> => {
   return `http://127.0.0.1:${String((server.address() as AddressInfo).port)}`;
 };
 
-export const createPipeline = async (model: (caseId: string) => LanguageModel) => {
+export interface PipelineOptions {
+  wrapGmail?: (gmail: FixtureGmailAdapter) => GmailAdapter;
+  withoutModel?: boolean;
+}
+
+export const createPipeline = async (
+  model: (caseId: string) => LanguageModel,
+  options: PipelineOptions = {},
+) => {
   const directory = mkdtempSync(join(tmpdir(), "rectify-pipeline-"));
   const store = openStore({ path: join(directory, "state.sqlite") });
   const gmail = new FixtureGmailAdapter({ mode: "local_fixture", threads: demoThreads });
@@ -99,9 +112,10 @@ export const createPipeline = async (model: (caseId: string) => LanguageModel) =
       reportdesk: "LOCAL FIXTURE",
     },
   );
+  const workerGmail = options.wrapGmail?.(gmail) ?? gmail;
   const services: WorkerServices = {
     store,
-    gmail,
+    gmail: workerGmail,
     github,
     slack,
     reportdesk: createReportDeskProbe({
@@ -113,7 +127,7 @@ export const createPipeline = async (model: (caseId: string) => LanguageModel) =
     }),
     actions: new ActionWorker({
       ledger: store.ledger,
-      reconcilers: createReconcilers({ gmail, github, slack }),
+      reconcilers: createReconcilers({ gmail: workerGmail, github, slack }),
     }),
     settings: {
       environments: {
@@ -132,7 +146,10 @@ export const createPipeline = async (model: (caseId: string) => LanguageModel) =
       promptRevision: "investigation-prompt-v1",
       approvalTtlMs: 300_000,
     },
-    model: { model: model(record.id), modelId: "scripted-test-model", lemma: null },
+    model:
+      options.withoutModel === true
+        ? null
+        : { model: model(record.id), modelId: "scripted-test-model", lemma: null },
     now: () => new Date(),
     createId: randomUUID,
   };
