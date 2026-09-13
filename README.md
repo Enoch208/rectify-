@@ -16,11 +16,6 @@ Rectify is a recovery agent for B2B support teams. It connects a complaint in Gm
 
 https://github.com/user-attachments/assets/44987a98-e08b-4768-b592-9ba8133996d7
 
-<video controls playsinline width="100%" poster="docs/demo/v2/poster.jpg" src="https://github.com/user-attachments/assets/44987a98-e08b-4768-b592-9ba8133996d7">
-<source src="https://github.com/user-attachments/assets/44987a98-e08b-4768-b592-9ba8133996d7" type="video/mp4">
-<source src="https://enoch208.github.io/rectify-/demo/v2/rectify-demo.mp4" type="video/mp4">
-</video>
-
 The demo follows Northstar Research. Its monthly CSV endpoint returns HTTP 200, its engineering issue is closed, and Slack says the rollout is complete—but the CSV has no records. Rectify detects the contradiction, creates a customer-impact issue, hands it to engineering, waits for a human-applied configuration fix, rechecks the same export, obtains approval for the exact email, sends it once, and observes the customer’s successful export before declaring recovery.
 
 The recording uses the actual application and a real investigation model. Gmail, GitHub, Slack, and ReportDesk are explicitly labelled `LOCAL FIXTURE`; they are not presented as live-provider results. Captions, transcript, source, and measured video checks are available from the [demo page](https://enoch208.github.io/rectify-/demo/v2/).
