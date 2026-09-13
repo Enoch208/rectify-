@@ -23,8 +23,8 @@ The recording uses the actual application and a real investigation model. Gmail,
 | Surface | Link | Notes |
 |---|---|---|
 | Rectify site and operator workspace | [rectify-app-two.vercel.app](https://rectify-app-two.vercel.app) | Served by Vercel; every `/api` request is forwarded to the backend host. The workspace requires an operator token. |
-| Backend host | Case API, SQLite store, worker and ReportDesk in one container | Runs the real investigation model; Gmail, GitHub, Slack and ReportDesk are labelled `LOCAL FIXTURE`. |
-| ReportDesk demo product | [Operator fix page](http://76.13.106.173:3311/operator) · customer export page linked from each approved email | Demo-only pages protected by their own tokens. |
+| Backend API | [rectify-api.truematchx.com](https://rectify-api.truematchx.com) | Case API, SQLite store, worker and ReportDesk in one container behind an HTTPS tunnel, with no ports exposed publicly. Runs the real investigation model; Gmail, GitHub, Slack and ReportDesk are labelled `LOCAL FIXTURE`. |
+| ReportDesk demo product | [Operator fix page](https://rectify-desk.truematchx.com/operator) · customer export page linked from each approved email | Demo-only pages protected by their own tokens. |
 
 The deployed Northstar case was run end to end on the backend host: investigation with `gpt-5.4-mini-2026-03-17` (9 tool calls), failed export check and engineering handoff, human configuration fix, passing recheck, Slack-signed approval, a single send, the customer's own export, and `RECOVERED` with synchronization `COMPLETE`.
 
