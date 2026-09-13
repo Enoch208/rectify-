@@ -8,7 +8,7 @@ Rectify is a recovery agent for B2B support teams. It connects a complaint in Gm
 
 ![tests](https://img.shields.io/badge/tests-92%20passing-2FA46A) ![integrations](https://img.shields.io/badge/external%20apps-Gmail%20%C2%B7%20GitHub%20%C2%B7%20Slack-5B8DEF) ![runtime](https://img.shields.io/badge/runtime-Node%2024-7BC043) ![demo](https://img.shields.io/badge/demo-2%3A00-E7B84B)
 
-**[Watch the narrated demo ↗](https://enoch208.github.io/rectify-/demo/v2/)** · **[Download the MP4 ↗](https://enoch208.github.io/rectify-/demo/v2/rectify-demo.mp4)** · **[Read the system and reliability brief](docs/SYSTEM_AND_RELIABILITY.md)**
+**[Open the live app ↗](https://rectify-app-two.vercel.app)** · **[Watch the narrated demo ↗](https://enoch208.github.io/rectify-/demo/v2/)** · **[Download the MP4 ↗](https://enoch208.github.io/rectify-/demo/v2/rectify-demo.mp4)** · **[Read the system and reliability brief](docs/SYSTEM_AND_RELIABILITY.md)**
 
 </div>
 
@@ -17,6 +17,16 @@ Rectify is a recovery agent for B2B support teams. It connects a complaint in Gm
 The demo follows Northstar Research. Its monthly CSV endpoint returns HTTP 200, its engineering issue is closed, and Slack says the rollout is complete—but the CSV has no records. Rectify detects the contradiction, creates a customer-impact issue, hands it to engineering, waits for a human-applied configuration fix, rechecks the same export, obtains approval for the exact email, sends it once, and observes the customer’s successful export before declaring recovery.
 
 The recording uses the actual application and a real investigation model. Gmail, GitHub, Slack, and ReportDesk are explicitly labelled `LOCAL FIXTURE`; they are not presented as live-provider results. Captions, transcript, source, and measured video checks are available from the [demo page](https://enoch208.github.io/rectify-/demo/v2/).
+
+## Live deployment
+
+| Surface | Link | Notes |
+|---|---|---|
+| Rectify site and operator workspace | [rectify-app-two.vercel.app](https://rectify-app-two.vercel.app) | Served by Vercel; every `/api` request is forwarded to the backend host. The workspace requires an operator token. |
+| Backend host | Case API, SQLite store, worker and ReportDesk in one container | Runs the real investigation model; Gmail, GitHub, Slack and ReportDesk are labelled `LOCAL FIXTURE`. |
+| ReportDesk demo product | [Operator fix page](http://76.13.106.173:3311/operator) · customer export page linked from each approved email | Demo-only pages protected by their own tokens. |
+
+The deployed Northstar case was run end to end on the backend host: investigation with `gpt-5.4-mini-2026-03-17` (9 tool calls), failed export check and engineering handoff, human configuration fix, passing recheck, Slack-signed approval, a single send, the customer's own export, and `RECOVERED` with synchronization `COMPLETE`.
 
 **Explore:** [Idea](#the-idea) · [Architecture](#architecture) · [External apps](#external-apps) · [Reliability](#reliability-is-part-of-the-workflow) · [Evidence](#inspect-the-evidence) · [Run locally](#run-locally) · [Evaluation](#verify-and-evaluate)
 
