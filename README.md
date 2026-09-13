@@ -4,7 +4,7 @@
 
 The demo product is ReportDesk. A customer at Northstar Research reports an empty monthly CSV export. The engineering issue is closed and Slack says the rollout is complete, but the export still returns HTTP 200 with no records for Northstar. Rectify catches that, opens a customer-impact issue, posts a Slack handoff, waits for a human-applied configuration fix, rechecks, requests approval for the exact email, sends it, and observes the customer's own successful export.
 
-**[Watch the two-minute narrated demo](https://enoch208.github.io/rectify-/demo/)** · [Download MP4](https://enoch208.github.io/rectify-/demo/rectify-demo.mp4) · [Editable recording source](video/README.md)
+**[Watch the two-minute narrated demo](https://enoch208.github.io/rectify-/demo/v2/)** · [Download MP4](https://enoch208.github.io/rectify-/demo/v2/rectify-demo.mp4) · [Editable recording source](video/README.md)
 
 The demo uses the actual application with a real investigation model and explicitly labelled local fixtures for Gmail, GitHub and Slack. It includes English captions and a transcript; no login is required.
 

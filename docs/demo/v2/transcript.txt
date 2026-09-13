@@ -1,0 +1,23 @@
+Closed isn’t fixed.
+You know that moment when a ticket gets closed, but the customer says it's still broken? That's the gap Rectify handles. It connects the complaint to the engineering work, checks what actually works for that customer, and follows through. That means checking the customer's actual task, not just trusting a status update. Let me show you.
+
+Start with the customer
+Here's Maya at Northstar. Her CSV export is empty. We open her Gmail thread, and Rectify creates the case. These are clearly labelled local fixtures.
+
+Check what actually happened
+Now we hit Investigate. A real model reads the complaint, checks the GitHub issues and Slack messages, then tries Northstar's export. And here's the catch: the issue is closed, but the export still fails.
+
+HTTP 200. Customer still blocked.
+The server says the request worked. But the records aren't there. So Rectify saves the evidence, opens a customer-impact issue, and hands it to engineering in Slack. No resolution email goes out.
+
+A human applies the correction
+Over in ReportDesk, a person enables the corrected export path. You can see the audit event and the new configuration revision. Back in Rectify, we recheck the same workflow. This time, it works.
+
+Approve the exact message
+Now we can review the exact message Maya will get. Approval is tied to the recipient, the wording, and that passing check. Here, the local helper submits a signed Slack approval. Nothing is sent before approval. The worker confirms one send.
+
+Let the customer prove recovery
+But sending an email isn't the finish line. Maya opens ReportDesk and tries the export herself. There's the expected row. That real customer action creates the signed recovery event.
+
+Recovery, with the evidence to show it
+And now she's recovered, with the follow-up updates confirmed. That's Rectify: not just a closed ticket, but a working customer workflow, with the evidence to back it up.

@@ -1,0 +1,81 @@
+{
+  "recordedAt": "2026-09-13T21:55:43.333Z",
+  "caseId": "7495d32b-7403-4025-971c-fb68c1735527",
+  "caseState": "RECOVERED",
+  "notificationState": "SENT",
+  "recoveryState": "OBSERVED",
+  "syncState": "COMPLETE",
+  "environments": {
+    "gmail": "LOCAL FIXTURE",
+    "github": "LOCAL FIXTURE",
+    "slack": "LOCAL FIXTURE",
+    "reportdesk": "LOCAL FIXTURE"
+  },
+  "run": {
+    "id": "154ec199-0a08-415d-a732-38589dbfc48a",
+    "model": "gpt-5.4-mini-2026-03-17",
+    "status": "SUCCEEDED",
+    "toolCallCount": 10,
+    "durationMs": 21691,
+    "commit": "1fab5d8",
+    "traceId": null
+  },
+  "verifications": [
+    {
+      "result": "FAIL",
+      "configRevision": 1,
+      "httpStatus": 200,
+      "expectedRows": 1,
+      "observedRows": 0
+    },
+    {
+      "result": "PASS",
+      "configRevision": 2,
+      "httpStatus": 200,
+      "expectedRows": 1,
+      "observedRows": 1
+    }
+  ],
+  "actions": [
+    {
+      "kind": "CREATE_IMPACT_ISSUE",
+      "status": "CONFIRMED",
+      "attempts": 1
+    },
+    {
+      "kind": "POST_SLACK_HANDOFF",
+      "status": "CONFIRMED",
+      "attempts": 1
+    },
+    {
+      "kind": "CREATE_CUSTOMER_DRAFT",
+      "status": "CONFIRMED",
+      "attempts": 1
+    },
+    {
+      "kind": "SEND_CUSTOMER_EMAIL",
+      "status": "CONFIRMED",
+      "attempts": 1
+    },
+    {
+      "kind": "POST_APPROVAL_REQUEST",
+      "status": "CONFIRMED",
+      "attempts": 1
+    },
+    {
+      "kind": "COMMENT_RECOVERY",
+      "status": "CONFIRMED",
+      "attempts": 1
+    },
+    {
+      "kind": "POST_RECOVERY_UPDATE",
+      "status": "CONFIRMED",
+      "attempts": 1
+    }
+  ],
+  "limitations": [
+    "Fixture providers, not live Gmail, GitHub or Slack",
+    "One recorded run, not an eighteen-trial evaluation",
+    "Openable Lemma trace not verified"
+  ]
+}

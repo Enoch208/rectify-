@@ -6,6 +6,7 @@
     "runtime": "node scripts/runtime.mjs",
     "capture": "node scripts/capture.mjs",
     "narrate": "node scripts/narrate.mjs",
+    "music": "node scripts/music.mjs",
     "render": "node scripts/render.mjs",
     "prepare": "node scripts/prepare.mjs",
     "mix": "node scripts/mix.mjs",

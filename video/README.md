@@ -2,7 +2,9 @@
 
 Two-minute product walkthrough for customer-support and engineering teams. The opening stays on the landing page for 20 seconds; the remaining 100 seconds demonstrate the actual application.
 
-[Public preview](https://enoch208.github.io/rectify-/demo/) · [MP4](https://enoch208.github.io/rectify-/demo/rectify-demo.mp4) · [Editable source and cached media](https://github.com/Enoch208/rectify-/releases/tag/demo-2026-09-13)
+[Public preview](https://enoch208.github.io/rectify-/demo/v2/) · [MP4](https://enoch208.github.io/rectify-/demo/v2/rectify-demo.mp4) · [Editable source and cached media](https://github.com/Enoch208/rectify-/releases/tag/demo-2026-09-13-v2)
+
+Version two changes only the narration, script, soundtrack and captions. The actual product footage is unchanged. [Version one remains available](https://github.com/Enoch208/rectify-/releases/tag/demo-2026-09-13).
 
 ## What was recorded
 
@@ -21,7 +23,7 @@ Requirements: Node 24, FFmpeg, Google Chrome on macOS, and the root application 
 3. Run `node video/scripts/capture.mjs`, then `node video/scripts/capture-recovery.mjs`, then `node video/scripts/capture-ending.mjs`.
 4. Run `node video/scripts/prepare.mjs`.
 5. Set `ELEVENLABS_ENV_FILE` to a local env file containing `ELEVENLABS_API_KEY`; run `node video/scripts/narrate.mjs`.
-6. Supply the reusable instrumental asset at `video/public/audio/music-source.mp3`.
+6. Run `node video/scripts/music.mjs` with `ELEVENLABS_ENV_FILE` set to generate the original two-minute instrumental.
 7. Run `node video/scripts/render.mjs --stills` to inspect framing, then `node video/scripts/render.mjs` to render chapter caches.
 8. Run `node video/scripts/mix.mjs`, then `node video/scripts/align.mjs` with `ELEVENLABS_ENV_FILE` set, then `node video/scripts/delivery.mjs` and `node video/scripts/verify.mjs`.
 9. Run `node video/scripts/preview.mjs`; open `http://127.0.0.1:3490`.
@@ -30,9 +32,9 @@ Capture records actual 1920×1080 browser content with an editorial pointer. The
 
 `chapters.json` contains the editable narration and timings; `src/index.jsx` contains the browser frame, chapter labels and restrained 4% focus zooms. Captured footage, narration and rendered chapters are cached and ignored by Git. Remove only the affected cached chapter when changing its visuals. Narration caching is content-hashed.
 
-Music reuses the user’s existing ElevenLabs-generated instrumental from the Carry project. It is normalized to −38 LUFS versus narration at −16 LUFS, then ducked further during speech. This asset is not a recording of a commercial song.
+Version two uses an original two-minute ElevenLabs instrumental: a warm electronic groove with a soft beat and an understated ending. It is mixed roughly 19.5 LU below narration, with gentle additional ducking during speech. No commercial song is sampled. The first version’s reused Carry instrumental and formal narration are preserved in its release.
 
-Narration uses ElevenLabs George (`eleven_multilingual_v2`). Final measured voice/music separation is 21.75 LU; the combined true peak is −4.37 dBTP. The final MP4 fully decodes, contains 3,600 frames at 30 fps, lasts 120 seconds, and passes the blank-frame scan. Caption timestamps come from [ElevenLabs forced alignment](https://elevenlabs.io/docs/api-reference/forced-alignment/create) against the final narration. Representative framing and browser playback were inspected. Subjective listening quality still warrants a final human listen before submission.
+Narration uses ElevenLabs Chris (`eleven_v3`) with a conversational direction and a rewritten spoken script. All eight chapters retain their generated speed; no clip is slowed or accelerated. `audio-direction.json` stores the actual voice ID, model and music prompt. The [verification report](../docs/demo/v2/verification.json) records measured audio levels, 3,600 frames at 30 fps, a 120-second duration, full decoding and the blank-frame scan. Caption timestamps come from [ElevenLabs forced alignment](https://elevenlabs.io/docs/api-reference/forced-alignment/create) against the final narration. Representative framing and browser playback were inspected. Subjective listening quality still warrants a final human listen before submission.
 
 ## Publication checklist
 

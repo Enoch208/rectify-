@@ -1,17 +1,10 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Rectify — Closed Isn’t Fixed | Two-minute demo</title>
-<style>body{margin:0;background:#080b13;color:#f0f1f5;font:17px/1.6 system-ui,sans-serif}main{max-width:1200px;margin:auto;padding:40px 24px}h1{font-size:clamp(28px,5vw,48px);line-height:1.12;margin-bottom:16px}video{width:100%;border:1px solid #353d51;border-radius:14px;background:#000}a{color:#a5beff}p{max-width:850px;color:#bcc6da}h2{font-size:23px}details{margin-top:32px}summary{cursor:pointer;font-size:22px}section{margin-top:28px}.meta{color:#a5b9e0;font-size:14px;letter-spacing:.05em}video::cue{background:#080b13ed;color:white}</style></head>
-<body><main><div class="meta">RECTIFY · PRODUCT WALKTHROUGH · 2:00</div><h1>Closed isn’t fixed.</h1>
-<p>Follow a customer complaint through engineering evidence, workflow verification, human approval and observed recovery.</p>
-<video controls playsinline preload="metadata" poster="poster.jpg"><source src="rectify-demo.mp4" type="video/mp4"><track kind="captions" src="captions.vtt" srclang="en" label="English">Your browser does not support embedded video. <a href="rectify-demo.mp4">Download the MP4.</a></video>
-<p><a href="rectify-demo.mp4" download>Download video</a> · <a href="captions.vtt" download>English captions</a> · <a href="https://github.com/Enoch208/rectify-">Public repository</a></p>
-<p>Actual local application. Gmail, GitHub and Slack use explicitly labelled fixtures. Investigation uses a real model. Waiting time is shortened. AI-generated narration.</p>
-<details><summary>Read the full transcript</summary><section><h2>Closed isn’t fixed.</h2><p>A ticket closes. Engineering says the fix is live. But the customer still can't get their work done. Rectify connects the complaint, the engineering evidence, and the customer's actual workflow, then follows through until recovery is observed. Let's walk through it.</p></section>
-<section><h2>Start with the customer</h2><p>We're using labelled local fixtures for this recording. Maya at Northstar reports an empty CSV export. Opening her Gmail thread creates a case using the trusted customer directory.</p></section>
-<section><h2>Check what actually happened</h2><p>Investigate starts a real model turn. It reads the complaint, compares plausible GitHub issues, checks the Slack rollout claim, and runs Northstar's export. The issue is closed, but the workflow check fails.</p></section>
-<section><h2>HTTP 200. Customer still blocked.</h2><p>Here's the gap: the request succeeded, but the expected records are missing. Rectify records the evidence, creates a customer-impact issue and a Slack handoff, and keeps the resolution message blocked.</p></section>
-<section><h2>A human applies the correction</h2><p>In ReportDesk, an operator enables the corrected export path. This is an explicit human configuration change, with an audit event and a new revision. Recheck runs the same customer workflow again. This time, it passes.</p></section>
-<section><h2>Approve the exact message</h2><p>Now the customer message is ready for review. Approval binds the recipient, wording, and passing check. For this fixture recording, the local helper submits a signed approval through the same validation endpoint. The worker confirms one send.</p></section>
-<section><h2>Let the customer prove recovery</h2><p>Sending isn't recovery. Maya opens ReportDesk in a customer session and runs the export herself. The expected rows appear. Only that successful customer operation produces the signed outcome event.</p></section>
-<section><h2>Recovery, with the evidence to show it</h2><p>The customer has recovered, and cross-app updates are confirmed. Rectify keeps engineering status, verification, notification, and recovery separate. Every conclusion has evidence.</p></section></details></main></body></html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="0;url=./v2/">
+<title>Rectify — Updated narrated demo</title>
+</head>
+<body><p><a href="./v2/">Watch the updated two-minute Rectify demo</a></p></body>
+</html>

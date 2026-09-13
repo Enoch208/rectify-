@@ -2,7 +2,7 @@
 
 Title: **Rectify — Closed Isn’t Fixed | Two-Minute Product Demo**
 
-Demo: https://enoch208.github.io/rectify-/demo/
+Demo: https://enoch208.github.io/rectify-/demo/v2/
 
 Repository: https://github.com/Enoch208/rectify-
 

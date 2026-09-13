@@ -4,55 +4,55 @@
     "seconds": 20,
     "title": "Closed isn’t fixed.",
     "subtitle": "From a customer complaint to observed recovery",
-    "narration": "A ticket closes. Engineering says the fix is live. But the customer still can't get their work done. Rectify connects the complaint, the engineering evidence, and the customer's actual workflow, then follows through until recovery is observed. Let's walk through it."
+    "narration": "You know that moment when a ticket gets closed, but the customer says it's still broken? That's the gap Rectify handles. It connects the complaint to the engineering work, checks what actually works for that customer, and follows through. That means checking the customer's actual task, not just trusting a status update. Let me show you."
   },
   {
     "id": "02-intake",
     "seconds": 12,
     "title": "Start with the customer",
     "subtitle": "Trusted identity · one persistent case",
-    "narration": "We're using labelled local fixtures for this recording. Maya at Northstar reports an empty CSV export. Opening her Gmail thread creates a case using the trusted customer directory."
+    "narration": "Here's Maya at Northstar. Her CSV export is empty. We open her Gmail thread, and Rectify creates the case. These are clearly labelled local fixtures."
   },
   {
     "id": "03-investigate",
     "seconds": 15,
     "title": "Check what actually happened",
     "subtitle": "Real model investigation · waiting time shortened",
-    "narration": "Investigate starts a real model turn. It reads the complaint, compares plausible GitHub issues, checks the Slack rollout claim, and runs Northstar's export. The issue is closed, but the workflow check fails."
+    "narration": "Now we hit Investigate. A real model reads the complaint, checks the GitHub issues and Slack messages, then tries Northstar's export. And here's the catch: the issue is closed, but the export still fails."
   },
   {
     "id": "04-failure",
     "seconds": 15,
     "title": "HTTP 200. Customer still blocked.",
     "subtitle": "Expected records missing · no resolution email",
-    "narration": "Here's the gap: the request succeeded, but the expected records are missing. Rectify records the evidence, creates a customer-impact issue and a Slack handoff, and keeps the resolution message blocked."
+    "narration": "The server says the request worked. But the records aren't there. So Rectify saves the evidence, opens a customer-impact issue, and hands it to engineering in Slack. No resolution email goes out."
   },
   {
     "id": "05-fix",
     "seconds": 15,
     "title": "A human applies the correction",
     "subtitle": "ReportDesk configuration change · audited revision",
-    "narration": "In ReportDesk, an operator enables the corrected export path. This is an explicit human configuration change, with an audit event and a new revision. Recheck runs the same customer workflow again. This time, it passes."
+    "narration": "Over in ReportDesk, a person enables the corrected export path. You can see the audit event and the new configuration revision. Back in Rectify, we recheck the same workflow. This time, it works."
   },
   {
     "id": "06-approval",
     "seconds": 17,
     "title": "Approve the exact message",
     "subtitle": "Local Slack-signed approval · fixture send",
-    "narration": "Now the customer message is ready for review. Approval binds the recipient, wording, and passing check. For this fixture recording, the local helper submits a signed approval through the same validation endpoint. The worker confirms one send."
+    "narration": "Now we can review the exact message Maya will get. Approval is tied to the recipient, the wording, and that passing check. Here, the local helper submits a signed Slack approval. Nothing is sent before approval. The worker confirms one send."
   },
   {
     "id": "07-customer",
     "seconds": 14,
     "title": "Let the customer prove recovery",
     "subtitle": "Authenticated customer session · real export",
-    "narration": "Sending isn't recovery. Maya opens ReportDesk in a customer session and runs the export herself. The expected rows appear. Only that successful customer operation produces the signed outcome event."
+    "narration": "But sending an email isn't the finish line. Maya opens ReportDesk and tries the export herself. There's the expected row. That real customer action creates the signed recovery event."
   },
   {
     "id": "08-recovered",
     "seconds": 12,
     "title": "Recovery, with the evidence to show it",
     "subtitle": "Customer recovered · cross-app updates confirmed",
-    "narration": "The customer has recovered, and cross-app updates are confirmed. Rectify keeps engineering status, verification, notification, and recovery separate. Every conclusion has evidence."
+    "narration": "And now she's recovered, with the follow-up updates confirmed. That's Rectify: not just a closed ticket, but a working customer workflow, with the evidence to back it up."
   }
 ]
