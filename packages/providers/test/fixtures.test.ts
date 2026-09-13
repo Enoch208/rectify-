@@ -1,0 +1,63 @@
+import assert from "node:assert/strict";
+import { test } from "node:test";
+import {
+  createGitHubAdapter,
+  createGmailAdapter,
+  createSlackAdapter,
+  providerEnvironmentByMode,
+} from "../src/index.ts";
+
+void test("local fixture adapters remain explicitly labelled and stateful", async () => {
+  const gmail = createGmailAdapter({
+    mode: "local_fixture",
+    threads: [{ id: "thread-1", messages: [{ id: "message-1", threadId: "thread-1" }] }],
+  });
+  const github = createGitHubAdapter({
+    mode: "local_fixture",
+    owner: "rectify",
+    repo: "provider-tests",
+    issues: [
+      {
+        id: 1,
+        number: 1,
+        title: "Source issue",
+        body: "Fixture source",
+        state: "closed",
+        html_url: "https://github.local/rectify/provider-tests/issues/1",
+      },
+    ],
+  });
+  const slack = createSlackAdapter({
+    mode: "local_fixture",
+    channelId: "channel-1",
+    messages: [{ ts: "1.000000", text: "Source message" }],
+  });
+
+  const thread = await gmail.readThread("thread-1");
+  const draft = await gmail.createDraft({ threadId: "thread-1", rawMime: "Subject: Test" });
+  const sourceIssue = await github.readIssue(1);
+  const createdIssue = await github.createIssue({ title: "Impact", body: "Observed failure" });
+  const message = await slack.postMessage("Engineering handoff");
+  const messages = await slack.readMessages(2);
+
+  assert.equal(providerEnvironmentByMode[gmail.mode], "LOCAL FIXTURE");
+  assert.equal(thread.id, "thread-1");
+  assert.equal(draft.message.threadId, "thread-1");
+  assert.equal(sourceIssue.state, "closed");
+  assert.equal(createdIssue.number, 2);
+  assert.equal(message.text, "Engineering handoff");
+  assert.equal(messages.length, 2);
+});
+
+void test("fixture adapters reject records outside their configured scope", async () => {
+  const gmail = createGmailAdapter({ mode: "local_fixture", threads: [] });
+  const github = createGitHubAdapter({
+    mode: "local_fixture",
+    owner: "rectify",
+    repo: "provider-tests",
+    issues: [],
+  });
+
+  await assert.rejects(gmail.readThread("missing"), /not configured/u);
+  await assert.rejects(github.readIssue(42), /not configured/u);
+});

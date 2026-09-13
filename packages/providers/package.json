@@ -1,0 +1,25 @@
+{
+  "name": "@rectify/providers",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test test/*.test.ts",
+    "smoke": "node src/smoke.ts"
+  },
+  "devDependencies": {
+    "@rectify/eslint-config": "workspace:*",
+    "@rectify/typescript-config": "workspace:*",
+    "@types/node": "24.13.4",
+    "eslint": "9.39.5",
+    "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "zod": "4.6.4"
+  }
+}

@@ -144,6 +144,28 @@ importers:
         specifier: 8.70.0
         version: 8.70.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
 
+  packages/providers:
+    dependencies:
+      zod:
+        specifier: 4.6.4
+        version: 4.6.4
+    devDependencies:
+      '@rectify/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@rectify/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 24.13.4
+        version: 24.13.4
+      eslint:
+        specifier: 9.39.5
+        version: 9.39.5(jiti@2.7.0)
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
   packages/typescript-config: {}
 
   packages/ui: {}
