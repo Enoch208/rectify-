@@ -55,7 +55,8 @@ export const createPipeline = async (
   options: PipelineOptions = {},
 ) => {
   const directory = mkdtempSync(join(tmpdir(), "rectify-pipeline-"));
-  const store = openStore({ path: join(directory, "state.sqlite") });
+  const databasePath = join(directory, "state.sqlite");
+  const store = openStore({ path: databasePath });
   const gmail = new FixtureGmailAdapter({ mode: "local_fixture", threads: demoThreads });
   const github = new FixtureGitHubAdapter({
     mode: "local_fixture",
@@ -172,6 +173,7 @@ export const createPipeline = async (
     services,
     loop,
     caseId: record.id,
+    databasePath,
     post,
     close: async () => {
       await new Promise((resolve) => product.close(resolve));
