@@ -121,8 +121,13 @@ export class CaseRepository {
   queue(caseId: string, kind: "INVESTIGATE" | "RECHECK"): string {
     return runTransaction(this.#context.database, () => {
       const current = this.getCase(caseId);
-      const allowed = kind === "INVESTIGATE" ? ["NEW"] : ["WAITING_ENGINEERING", "NEEDS_HUMAN"];
-      if (!allowed.includes(current.state)) {
+      const permitted =
+        kind === "INVESTIGATE"
+          ? current.state === "NEW" ||
+            (current.state === "NEEDS_HUMAN" && current.resumeState === "NEW")
+          : current.state === "WAITING_ENGINEERING" ||
+            (current.state === "NEEDS_HUMAN" && current.resumeState !== "NEW");
+      if (!permitted) {
         throw new StatusError(
           409,
           `${kind.toLowerCase()} is not allowed while case is ${current.state}`,
@@ -134,7 +139,7 @@ export class CaseRepository {
       this.writeInTransaction(caseId, current.version, {
         state: "INVESTIGATING",
         needsHumanReason: null,
-        resumeState: current.state === "NEEDS_HUMAN" ? current.resumeState : null,
+        resumeState: null,
       });
       return this.#jobs.enqueue(this.#context.createId(), caseId, kind).id;
     });

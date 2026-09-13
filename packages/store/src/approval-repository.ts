@@ -52,6 +52,21 @@ export class ApprovalRepository {
     );
   }
 
+  listExpiredPending(): ApprovalRecord[] {
+    return parseRecordRows(
+      this.#context.database
+        .prepare(
+          `SELECT record_json FROM approval_records
+           WHERE json_extract(record_json, '$.decision') = 'PENDING'
+           AND json_extract(record_json, '$.revokedAt') IS NULL
+           AND json_extract(record_json, '$.expiresAt') <= ?
+           ORDER BY id`,
+        )
+        .all(this.#context.now().toISOString()),
+      approvalRecordSchema,
+    );
+  }
+
   consume(approvalId: string): ApprovalRecord {
     return this.#settle(approvalId, "consumedAt");
   }

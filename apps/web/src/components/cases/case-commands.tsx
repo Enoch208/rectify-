@@ -50,8 +50,8 @@ export function CaseCommands({ record, onChanged }: { record: CaseRecord; onChan
   };
 
   const buttons: readonly { command: Command; label: string; enabled: boolean }[] = [
-    { command: "investigate", label: "Investigate", enabled: canInvestigate(record.state) },
-    { command: "recheck", label: "Recheck workflow", enabled: canRecheck(record.state) },
+    { command: "investigate", label: "Investigate", enabled: canInvestigate(record) },
+    { command: "recheck", label: "Recheck workflow", enabled: canRecheck(record) },
   ];
 
   return (

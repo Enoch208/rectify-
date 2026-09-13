@@ -14,7 +14,7 @@ export const toolInputSchemas = {
   slackInput: caseInput.extend({ limit: z.number().int().min(1).max(20) }),
   verificationInput: caseInput.extend({ period: z.string().min(1) }),
   proposalInput: caseInput.extend({
-    kind: z.enum(["CREATE_IMPACT_ISSUE", "POST_SLACK_HANDOFF", "CREATE_CUSTOMER_DRAFT"]),
+    kind: z.enum(["CREATE_IMPACT_ISSUE", "POST_SLACK_HANDOFF"]),
     rationale: z.string().min(1).max(2_000),
   }),
   humanInput: caseInput.extend({

@@ -7,6 +7,8 @@
     ".": "./src/index.ts"
   },
   "scripts": {
+    "dev": "node --watch src/main.ts",
+    "start": "node src/main.ts",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test": "node --test test/*.test.ts"
@@ -19,6 +21,13 @@
     "typescript": "5.9.3"
   },
   "dependencies": {
-    "@rectify/core": "workspace:*"
+    "@rectify/agent": "workspace:*",
+    "@rectify/core": "workspace:*",
+    "@rectify/providers": "workspace:*",
+    "@rectify/reportdesk": "workspace:*",
+    "@rectify/store": "workspace:*",
+    "@rectify/verifier": "workspace:*",
+    "ai": "7.0.99",
+    "zod": "4.6.4"
   }
 }

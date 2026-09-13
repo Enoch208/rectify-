@@ -116,10 +116,13 @@ export function nextAction(record: CaseRecord): string {
   }
 }
 
-export function canInvestigate(state: CaseState): boolean {
-  return state === "NEW";
+export function canInvestigate(record: Pick<CaseRecord, "state" | "resumeState">): boolean {
+  return record.state === "NEW" || (record.state === "NEEDS_HUMAN" && record.resumeState === "NEW");
 }
 
-export function canRecheck(state: CaseState): boolean {
-  return state === "WAITING_ENGINEERING" || state === "NEEDS_HUMAN";
+export function canRecheck(record: Pick<CaseRecord, "state" | "resumeState">): boolean {
+  return (
+    record.state === "WAITING_ENGINEERING" ||
+    (record.state === "NEEDS_HUMAN" && record.resumeState !== "NEW")
+  );
 }
