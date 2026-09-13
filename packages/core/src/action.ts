@@ -13,6 +13,8 @@ export const actionStateSchema = z.enum([
 
 export type ActionState = z.infer<typeof actionStateSchema>;
 
+export const actionPayloadSchema = z.record(z.string(), z.json());
+
 export const actionAttemptSchema = z.object({
   number: z.number().int().positive(),
   startedAt: timestampSchema,
@@ -28,7 +30,7 @@ export const actionRecordSchema = z.object({
   logicalKey: identifierSchema,
   provider: providerSchema,
   kind: identifierSchema,
-  payload: z.record(z.string(), z.unknown()),
+  payload: actionPayloadSchema,
   payloadHash: sha256Schema,
   status: actionStateSchema,
   attempts: z.array(actionAttemptSchema),
