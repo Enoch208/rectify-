@@ -4,6 +4,8 @@
 
 ### Closed isn’t fixed. The customer’s workflow is the finish line.
 
+**Most agent systems verify that an action landed. Rectify verifies that the customer can work again.**
+
 Rectify is a recovery agent for B2B support teams. It connects a complaint in Gmail to engineering context in GitHub and Slack, verifies the customer’s actual workflow, gates communication behind human approval, and closes the loop only after the product observes the customer succeed.
 
 ![tests](https://img.shields.io/badge/tests-92%20passing-2FA46A) ![integrations](https://img.shields.io/badge/external%20apps-Gmail%20%C2%B7%20GitHub%20%C2%B7%20Slack-5B8DEF) ![runtime](https://img.shields.io/badge/runtime-Node%2024-7BC043) ![demo](https://img.shields.io/badge/demo-2%3A00-E7B84B)
