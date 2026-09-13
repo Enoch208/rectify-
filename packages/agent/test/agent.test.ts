@@ -12,7 +12,9 @@ import {
 const handlers: AgentToolHandlers = {
   getCase: () => Promise.reject(new Error("Unexpected getCase call")),
   readGmailThread: () => Promise.reject(new Error("Unexpected readGmailThread call")),
+  listGitHubIssues: () => Promise.reject(new Error("Unexpected listGitHubIssues call")),
   readGitHubIssue: () => Promise.reject(new Error("Unexpected readGitHubIssue call")),
+  selectEngineeringIssue: () => Promise.reject(new Error("Unexpected selectEngineeringIssue call")),
   readSlackMessages: () => Promise.reject(new Error("Unexpected readSlackMessages call")),
   verifyCsvExport: () => Promise.reject(new Error("Unexpected verifyCsvExport call")),
   proposeAction: () => Promise.reject(new Error("Unexpected proposeAction call")),
