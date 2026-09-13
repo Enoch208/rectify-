@@ -9,7 +9,7 @@ import { requireOperator } from "./auth.ts";
 import { openStore } from "@rectify/store";
 import { HttpError, errorResponse } from "./errors.ts";
 import { acceptCustomerOutcome } from "./outcome-events.ts";
-import { bindSlackDecision, parseSlackDecision, verifySlackRequest } from "./slack-approval.ts";
+import { bindSlackDecision, parseSlackDecision, verifySlackRequest } from "@rectify/store";
 import {
   approval,
   environments,

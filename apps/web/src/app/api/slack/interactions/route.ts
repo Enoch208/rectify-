@@ -1,7 +1,7 @@
 import { getApproverIds, requireEnvironment } from "@/server/config";
 import { errorResponse } from "@/server/errors";
 import { openRepositories } from "@/server/repositories";
-import { bindSlackDecision, parseSlackDecision, verifySlackRequest } from "@/server/slack-approval";
+import { bindSlackDecision, parseSlackDecision, verifySlackRequest } from "@rectify/store";
 
 export async function POST(request: Request) {
   try {

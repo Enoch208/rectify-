@@ -2,18 +2,22 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type SubmitEvent } from "react";
-import { postCaseResponseSchema, type PostCaseRequest } from "@rectify/core";
+import {
+  ambiguousIntakeResponseSchema,
+  postCaseResponseSchema,
+  type PostCaseRequest,
+} from "@rectify/core";
 import { describeFailure, postContract } from "@/lib/api/contract";
+import { TenantChoice } from "./tenant-choice";
 
 export function OpenCaseForm() {
   const router = useRouter();
   const [threadId, setThreadId] = useState("");
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [tenantIds, setTenantIds] = useState<readonly string[]>([]);
 
-  const submit = (event: SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const request: PostCaseRequest = { gmailThreadId: threadId.trim() };
+  const open = (request: PostCaseRequest) => {
     setPending(true);
     setMessage(null);
     postContract("/api/cases", request, postCaseResponseSchema)
@@ -29,9 +33,12 @@ export function OpenCaseForm() {
             case "unauthorized":
               setMessage(`Sign in required: ${result.message}`);
               return;
-            case "rejected":
+            case "rejected": {
+              const ambiguous = ambiguousIntakeResponseSchema.safeParse(result.body);
+              setTenantIds(ambiguous.success ? ambiguous.data.tenantIds : []);
               setMessage(result.message);
               return;
+            }
           }
         },
         (error: unknown) => {
@@ -41,6 +48,12 @@ export function OpenCaseForm() {
       .finally(() => {
         setPending(false);
       });
+  };
+
+  const submit = (event: SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setTenantIds([]);
+    open({ gmailThreadId: threadId.trim() });
   };
 
   return (
@@ -57,6 +70,7 @@ export function OpenCaseForm() {
           value={threadId}
           onChange={(event) => {
             setThreadId(event.target.value);
+            setTenantIds([]);
           }}
           placeholder="Gmail thread ID"
           autoComplete="off"
@@ -70,6 +84,15 @@ export function OpenCaseForm() {
           {pending ? "Opening…" : "Open case"}
         </button>
       </div>
+      {tenantIds.length > 0 && (
+        <TenantChoice
+          tenantIds={tenantIds}
+          disabled={pending}
+          onChoose={(tenantId) => {
+            open({ gmailThreadId: threadId.trim(), tenantId });
+          }}
+        />
+      )}
       <p className="text-xs text-neutral-500">
         {message ??
           "Only threads in the trusted intake directory open a case. Re-opening a thread resumes its case."}

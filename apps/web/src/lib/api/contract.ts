@@ -11,30 +11,36 @@ export type CommandResult<T> =
   | { readonly kind: "accepted"; readonly data: T }
   | { readonly kind: "not-connected"; readonly path: string }
   | { readonly kind: "unauthorized"; readonly message: string }
-  | { readonly kind: "rejected"; readonly status: number; readonly message: string };
+  | {
+      readonly kind: "rejected";
+      readonly status: number;
+      readonly message: string;
+      readonly body: unknown;
+    };
 
 function isJson(response: Response): boolean {
   return response.headers.get("content-type")?.includes("application/json") ?? false;
 }
 
 function isUnauthorized(response: Response): boolean {
-  return response.status === 401 || response.status === 403;
+  return response.status === 401;
+}
+
+async function readError(response: Response): Promise<{ message: string; body: unknown }> {
+  const fallback = `The API answered ${String(response.status)}.`;
+  if (!isJson(response)) {
+    return { message: fallback, body: null };
+  }
+  const body: unknown = await response.json();
+  const message =
+    typeof body === "object" && body !== null && "error" in body && typeof body.error === "string"
+      ? body.error
+      : fallback;
+  return { message, body };
 }
 
 async function errorMessage(response: Response): Promise<string> {
-  if (!isJson(response)) {
-    return `The API answered ${String(response.status)}.`;
-  }
-  const body: unknown = await response.json();
-  if (
-    typeof body === "object" &&
-    body !== null &&
-    "error" in body &&
-    typeof body.error === "string"
-  ) {
-    return body.error;
-  }
-  return `The API answered ${String(response.status)}.`;
+  return (await readError(response)).message;
 }
 
 export async function fetchContract<T>(
@@ -95,7 +101,8 @@ async function sendContract<T>(
     return { kind: "unauthorized", message: await errorMessage(response) };
   }
   if (!response.ok) {
-    return { kind: "rejected", status: response.status, message: await errorMessage(response) };
+    const failure = await readError(response);
+    return { kind: "rejected", status: response.status, ...failure };
   }
   const parsed = schema.safeParse(await response.json());
   if (!parsed.success) {
@@ -103,6 +110,7 @@ async function sendContract<T>(
       kind: "rejected",
       status: response.status,
       message: `The response from ${path} did not match the contract.`,
+      body: null,
     };
   }
   return { kind: "accepted", data: parsed.data };

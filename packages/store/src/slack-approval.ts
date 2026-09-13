@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { approvalRecordSchema, type ApprovalRecord } from "@rectify/core";
 import { z } from "zod";
-import { HttpError } from "./errors.ts";
+import { StatusError as HttpError } from "./errors.ts";
 
 const slackPayloadSchema = z.object({
   type: z.literal("block_actions"),

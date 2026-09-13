@@ -10,3 +10,5 @@ export * from "./outcome-repository.ts";
 export * from "./record-repository.ts";
 export * from "./run-repository.ts";
 export * from "./store.ts";
+export * from "./slack-approval.ts";
+export * from "./intake-resolution.ts";

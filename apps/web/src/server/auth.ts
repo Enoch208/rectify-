@@ -33,6 +33,6 @@ export const requireOperator = (request: Request, expectedToken: string): void =
     throw new HttpError(401, "Operator authentication is required");
   }
   if (!equal(received, expectedToken)) {
-    throw new HttpError(403, "Operator credentials were rejected");
+    throw new HttpError(401, "Operator credentials were rejected");
   }
 };

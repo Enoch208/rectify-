@@ -5,7 +5,8 @@ import {
 } from "@rectify/core";
 import { requireOperator } from "@/server/auth";
 import { getIntakeDirectory, getProviderEnvironments, requireEnvironment } from "@/server/config";
-import { errorResponse, HttpError } from "@/server/errors";
+import { resolveIntake } from "@rectify/store";
+import { errorResponse } from "@/server/errors";
 import { openRepositories } from "@/server/repositories";
 import { parseJsonBody } from "@/server/request";
 
@@ -29,14 +30,15 @@ export async function POST(request: Request) {
   try {
     requireOperator(request, requireEnvironment("RECTIFY_OPERATOR_TOKEN"));
     const body = await parseJsonBody(request, postCaseRequestSchema);
-    const identity = getIntakeDirectory().find(
-      (entry) => entry.gmailThreadId === body.gmailThreadId,
-    );
-    if (identity === undefined) {
-      throw new HttpError(403, "Gmail thread is not present in the trusted intake directory");
-    }
     const repositories = openRepositories();
     try {
+      const identity = resolveIntake({
+        directory: getIntakeDirectory(),
+        clarifications: repositories.clarifications,
+        gmailThreadId: body.gmailThreadId,
+        tenantId: body.tenantId ?? null,
+        operatorId: "operator",
+      });
       const record = repositories.cases.createOrResume(identity, getProviderEnvironments());
       return Response.json(postCaseResponseSchema.parse({ case: record }));
     } finally {
