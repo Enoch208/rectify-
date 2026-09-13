@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { signOutcomeEvent } from "@rectify/core/outcomes";
 import { ApprovalRepository } from "./approval-repository.ts";
+import { requireOperator } from "./auth.ts";
 import { CaseRepository } from "./case-repository.ts";
 import { HttpError, errorResponse } from "./errors.ts";
 import { acceptCustomerOutcome } from "./outcome-events.ts";
@@ -151,6 +152,29 @@ void test("unknown resources become JSON 404 responses", async () => {
   assert.equal(response.status, 404);
   assert.equal(response.headers.get("content-type")?.includes("application/json"), true);
   assert.deepEqual(await response.json(), { error: "Run not found: missing" });
+});
+
+void test("operator authentication accepts bearer and encoded same-origin cookie tokens", () => {
+  requireOperator(
+    new Request("https://rectify.example/api/cases", {
+      headers: { authorization: "Bearer token with spaces" },
+    }),
+    "token with spaces",
+  );
+  requireOperator(
+    new Request("https://rectify.example/api/cases", {
+      headers: { cookie: "rectify_operator_token=token%20with%20spaces" },
+    }),
+    "token with spaces",
+  );
+  assert.throws(() => {
+    requireOperator(
+      new Request("https://rectify.example/api/cases", {
+        headers: { cookie: "rectify_operator_token=wrong" },
+      }),
+      "token with spaces",
+    );
+  }, HttpError);
 });
 
 void test("approval persistence retains the bound decision", () => {

@@ -9,16 +9,25 @@ const equal = (received: string, expected: string): boolean => {
   );
 };
 
+export const operatorTokenMatches = (received: string, expected: string): boolean =>
+  equal(received, expected);
+
 export const requireOperator = (request: Request, expectedToken: string): void => {
   const authorization = request.headers.get("authorization");
   const prefix = "Bearer ";
   const bearer =
     authorization?.startsWith(prefix) === true ? authorization.slice(prefix.length) : null;
-  const cookie = request.headers
+  const encodedCookie = request.headers
     .get("cookie")
     ?.split(";")
     .map((part) => part.trim().split("="))
     .find(([name]) => name === "rectify_operator_token")?.[1];
+  let cookie: string | undefined;
+  try {
+    cookie = encodedCookie === undefined ? undefined : decodeURIComponent(encodedCookie);
+  } catch {
+    cookie = undefined;
+  }
   const received = bearer ?? cookie;
   if (received === undefined) {
     throw new HttpError(401, "Operator authentication is required");
