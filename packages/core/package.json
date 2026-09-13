@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./ledger": "./src/ledger.ts"
+    "./ledger": "./src/ledger.ts",
+    "./outcomes": "./src/outcome-signing.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

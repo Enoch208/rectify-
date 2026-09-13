@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { DatabaseSync } from "node:sqlite";
 import { z } from "zod";
-import type { ActionRecord, ActionState } from "./action.ts";
+import type { ActionRecord } from "./action.ts";
 import { readAction, runTransaction } from "./ledger-database.ts";
-import { ActionTransitionError, LogicalActionConflictError } from "./ledger-errors.ts";
+import { LogicalActionConflictError } from "./ledger-errors.ts";
 import {
   actionIntentSchema,
   type ActionIntent,
@@ -11,6 +11,7 @@ import {
 } from "./ledger-intent.ts";
 import { migrateActionLedger } from "./ledger-schema.ts";
 import { payloadHash, stableJson } from "./ledger-serialization.ts";
+import { assertActionStatus, transitionAction } from "./ledger-transition.ts";
 
 export class ActionLedger {
   readonly #database: DatabaseSync;
@@ -84,77 +85,25 @@ export class ActionLedger {
     });
   }
 
-  #assertStatus(action: ActionRecord, expected: readonly ActionState[], target: ActionState): void {
-    if (!expected.includes(action.status)) {
-      throw new ActionTransitionError(action.id, action.status, target);
-    }
-  }
-
-  #transition(
-    actionId: string,
-    expected: readonly ActionState[],
-    target: ActionState,
-    values: {
-      providerIds?: readonly string[];
-      uncertaintyReason?: string | null;
-      error?: string | null;
-    } = {},
-  ): ActionRecord {
-    return runTransaction(this.#database, () => {
-      const current = readAction(this.#database, actionId);
-      this.#assertStatus(current, expected, target);
-      const timestamp = this.#now().toISOString();
-      this.#database
-        .prepare(
-          `
-          UPDATE actions
-          SET status = ?, provider_ids_json = ?, uncertainty_reason = ?, error = ?, updated_at = ?
-          WHERE id = ?
-        `,
-        )
-        .run(
-          target,
-          JSON.stringify(values.providerIds ?? current.providerIds),
-          values.uncertaintyReason ?? null,
-          values.error ?? null,
-          timestamp,
-          actionId,
-        );
-      if (current.status === "DISPATCHING") {
-        this.#database
-          .prepare(
-            `
-            UPDATE action_attempts
-            SET finished_at = ?, outcome = ?, error = ?
-            WHERE action_id = ? AND number = (
-              SELECT MAX(number) FROM action_attempts WHERE action_id = ?
-            ) AND outcome IS NULL
-          `,
-          )
-          .run(
-            timestamp,
-            target,
-            values.error ?? values.uncertaintyReason ?? null,
-            actionId,
-            actionId,
-          );
-      }
-      return readAction(this.#database, actionId);
-    });
-  }
-
   authorize(actionId: string): ActionRecord {
-    return this.#transition(actionId, ["PLANNED"], "AUTHORIZED");
+    return transitionAction(this.#database, this.#now, actionId, ["PLANNED"], "AUTHORIZED");
   }
 
   reject(actionId: string, reason: string): ActionRecord {
-    return this.#transition(actionId, ["PLANNED", "AUTHORIZED"], "REJECTED", { error: reason });
+    return transitionAction(
+      this.#database,
+      this.#now,
+      actionId,
+      ["PLANNED", "AUTHORIZED"],
+      "REJECTED",
+      { error: reason },
+    );
   }
 
   startDispatch(actionId: string): ActionRecord {
     return runTransaction(this.#database, () => {
       const current = readAction(this.#database, actionId);
-      this.#assertStatus(current, ["AUTHORIZED"], "DISPATCHING");
+      assertActionStatus(current, ["AUTHORIZED"], "DISPATCHING");
       const timestamp = this.#now().toISOString();
       const number = current.attempts.length + 1;
       this.#database
@@ -168,27 +117,48 @@ export class ActionLedger {
   }
 
   confirm(actionId: string, providerIds: readonly string[]): ActionRecord {
-    return this.#transition(actionId, ["DISPATCHING", "OUTCOME_UNKNOWN"], "CONFIRMED", {
-      providerIds,
-    });
+    return transitionAction(
+      this.#database,
+      this.#now,
+      actionId,
+      ["DISPATCHING", "OUTCOME_UNKNOWN"],
+      "CONFIRMED",
+      {
+        providerIds,
+      },
+    );
   }
 
   markOutcomeUnknown(actionId: string, reason: string): ActionRecord {
-    return this.#transition(actionId, ["DISPATCHING"], "OUTCOME_UNKNOWN", {
-      uncertaintyReason: reason,
-    });
+    return transitionAction(
+      this.#database,
+      this.#now,
+      actionId,
+      ["DISPATCHING"],
+      "OUTCOME_UNKNOWN",
+      {
+        uncertaintyReason: reason,
+      },
+    );
   }
 
   markConfirmedFailed(actionId: string, reason: string): ActionRecord {
-    return this.#transition(actionId, ["DISPATCHING", "OUTCOME_UNKNOWN"], "CONFIRMED_FAILED", {
-      error: reason,
-    });
+    return transitionAction(
+      this.#database,
+      this.#now,
+      actionId,
+      ["DISPATCHING", "OUTCOME_UNKNOWN"],
+      "CONFIRMED_FAILED",
+      {
+        error: reason,
+      },
+    );
   }
 
   recordUnresolvedReconciliation(actionId: string, reason: string): ActionRecord {
     return runTransaction(this.#database, () => {
       const current = readAction(this.#database, actionId);
-      this.#assertStatus(current, ["OUTCOME_UNKNOWN"], "OUTCOME_UNKNOWN");
+      assertActionStatus(current, ["OUTCOME_UNKNOWN"], "OUTCOME_UNKNOWN");
       this.#database
         .prepare("UPDATE actions SET uncertainty_reason = ?, updated_at = ? WHERE id = ?")
         .run(reason, this.#now().toISOString(), actionId);
@@ -210,6 +180,15 @@ export class ActionLedger {
     const rows = this.#database
       .prepare("SELECT id FROM actions WHERE status = 'OUTCOME_UNKNOWN' ORDER BY created_at")
       .all();
+    return rows.map((row) =>
+      readAction(this.#database, z.object({ id: z.string() }).parse(row).id),
+    );
+  }
+
+  listCaseActions(caseId: string): ActionRecord[] {
+    const rows = this.#database
+      .prepare("SELECT id FROM actions WHERE case_id = ? ORDER BY created_at")
+      .all(caseId);
     return rows.map((row) =>
       readAction(this.#database, z.object({ id: z.string() }).parse(row).id),
     );
