@@ -1,109 +1,156 @@
+<div align="center">
+
 # Rectify
 
-**Closed isn't fixed.** Rectify carries a customer complaint from Gmail through GitHub and Slack and back to the customer. It runs the customer's own workflow to check whether it actually works, hands failures to engineering, sends only a human-approved message, and marks a case recovered only when the product observes the customer succeeding.
+### Closed isn’t fixed. The customer’s workflow is the finish line.
 
-The demo product is ReportDesk. A customer at Northstar Research reports an empty monthly CSV export. The engineering issue is closed and Slack says the rollout is complete, but the export still returns HTTP 200 with no records for Northstar. Rectify catches that, opens a customer-impact issue, posts a Slack handoff, waits for a human-applied configuration fix, rechecks, requests approval for the exact email, sends it, and observes the customer's own successful export.
+Rectify is a recovery agent for B2B support teams. It connects a complaint in Gmail to engineering context in GitHub and Slack, verifies the customer’s actual workflow, gates communication behind human approval, and closes the loop only after the product observes the customer succeed.
 
-**[Watch the two-minute narrated demo](https://enoch208.github.io/rectify-/demo/v2/)** · [Download MP4](https://enoch208.github.io/rectify-/demo/v2/rectify-demo.mp4) · [Editable recording source](video/README.md)
+![tests](https://img.shields.io/badge/tests-92%20passing-2FA46A) ![integrations](https://img.shields.io/badge/external%20apps-Gmail%20%C2%B7%20GitHub%20%C2%B7%20Slack-5B8DEF) ![runtime](https://img.shields.io/badge/runtime-Node%2024-7BC043) ![demo](https://img.shields.io/badge/demo-2%3A00-E7B84B)
 
-The demo uses the actual application with a real investigation model and explicitly labelled local fixtures for Gmail, GitHub and Slack. It includes English captions and a transcript; no login is required.
+**[Watch the narrated demo ↗](https://enoch208.github.io/rectify-/demo/v2/)** · **[Download the MP4 ↗](https://enoch208.github.io/rectify-/demo/v2/rectify-demo.mp4)** · **[Read the system and reliability brief](docs/SYSTEM_AND_RELIABILITY.md)**
 
-## Status
+</div>
 
-| Area | State |
+[![Rectify’s two-minute product walkthrough](docs/demo/v2/poster.jpg)](https://enoch208.github.io/rectify-/demo/v2/)
+
+The demo follows Northstar Research. Its monthly CSV endpoint returns HTTP 200, its engineering issue is closed, and Slack says the rollout is complete—but the CSV has no records. Rectify detects the contradiction, creates a customer-impact issue, hands it to engineering, waits for a human-applied configuration fix, rechecks the same export, obtains approval for the exact email, sends it once, and observes the customer’s successful export before declaring recovery.
+
+The recording uses the actual application and a real investigation model. Gmail, GitHub, Slack, and ReportDesk are explicitly labelled `LOCAL FIXTURE`; they are not presented as live-provider results. Captions, transcript, source, and measured video checks are available from the [demo page](https://enoch208.github.io/rectify-/demo/v2/).
+
+**Explore:** [Idea](#the-idea) · [Architecture](#architecture) · [External apps](#external-apps) · [Reliability](#reliability-is-part-of-the-workflow) · [Evidence](#inspect-the-evidence) · [Run locally](#run-locally) · [Evaluation](#verify-and-evaluate)
+
+## Two-minute walkthrough
+
+| Time | What the recording demonstrates |
 |---|---|
-| Case store, action ledger, job queue, approvals, clarifications | Implemented, locally tested |
-| Worker: investigation and recheck jobs, engineering handoff, draft and Slack approval request, policy-checked send, recovery sync | Implemented, locally tested end to end with fixture providers and a scripted model |
-| Provider reconciliation for Gmail, GitHub and Slack writes | Implemented, locally tested |
-| Operator workspace, sign-in, case and run views | Implemented, locally tested in a browser |
-| ReportDesk demo product with customer and operator pages | Implemented, locally tested |
-| E01–E06 scenario runner and independent checker | Implemented; each scenario passes the checker in tests with scripted models (not a benchmark result) |
-| Live Gmail, GitHub and Slack | Not exercised in the recorded walkthrough; providers are explicitly `LOCAL FIXTURE` |
-| Real model investigation turn | Recorded successfully with `gpt-5.4-mini-2026-03-17`: 10 tool calls, 21.691 seconds; complete fixture-backed recovery flow |
-| Openable Lemma trace | Not verified; the recorded run's trace ID was null |
-| Final 18-trial evaluation with a real model | `NOT RUN` |
-| Arga twins | `NOT RUN` |
-| Docker deployment | Built and runtime-smoked locally with all three processes and persistent SQLite restart state |
+| 0:00–0:20 | The gap between an internally closed ticket and a customer who can actually work |
+| 0:20–0:47 | Trusted Gmail intake and a real model correlating GitHub, Slack, and the customer’s export |
+| 0:47–1:17 | HTTP 200 with missing records, safe engineering handoff, human fix, and deterministic recheck |
+| 1:17–1:48 | Exact-message approval, a single fixture send, and the customer retrying the workflow |
+| 1:48–2:00 | Signed recovery evidence and confirmed GitHub/Slack synchronization |
 
-Fixture-backed results are labelled `LOCAL FIXTURE` everywhere they appear and are never presented as live provider results.
+## The idea
 
-External apps: Gmail supplies the support thread and approved customer email; GitHub supplies engineering issues and customer-impact follow-through; Slack supplies rollout claims, engineering handoff and human approval. OpenAI provides the bounded investigation model, and Lemma instrumentation is present for tracing. ReportDesk is the included demo product, not an external service. [Recording source and reproduction notes](video/README.md) distinguish the recorded fixture workflow from live integrations and benchmark results.
+Support systems usually measure internal activity: a ticket closed, a deploy announced, an email sent. Rectify measures the external outcome: **can this customer complete the task now?**
 
-## How it works
+<div align="center">
 
+**`COMPLAINT → INVESTIGATE → VERIFY → HAND OFF → RECHECK → APPROVE → SEND → OBSERVE RECOVERY`**
+
+</div>
+
+- The model investigates untrusted context through narrow, read-only tools. It cannot send messages, choose recipients, approve itself, or mark a customer recovered.
+- Deterministic server policy owns every state transition and external write. A passing probe alone is insufficient, and a closed GitHub issue is never treated as proof.
+- A signed customer outcome event—not an agent claim or email delivery—establishes recovery. GitHub and Slack must then confirm the follow-through.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph Inputs["Customer and engineering context"]
+        GMAIL["Gmail<br/>complaint thread"]
+        GITHUB["GitHub<br/>issues and status"]
+        SLACK["Slack<br/>rollout history"]
+    end
+    subgraph Rectify["Rectify"]
+        API["Operator API<br/>authenticated commands"]
+        STORE[("SQLite<br/>cases · jobs · evidence")]
+        AGENT["Bounded AI turn<br/>20 calls · 90 seconds"]
+        VERIFY["csv-export-v1<br/>exact verifier"]
+        POLICY["Policy + action ledger<br/>intent before write"]
+        WORKER["Restart-safe worker<br/>reconciliation loop"]
+    end
+    PRODUCT["ReportDesk<br/>probe + customer export"]
+    CUSTOMER["Authenticated customer"]
+    API --> STORE --> WORKER
+    GMAIL --> AGENT
+    GITHUB --> AGENT
+    SLACK --> AGENT
+    WORKER --> AGENT --> VERIFY --> PRODUCT
+    WORKER --> POLICY
+    POLICY --> GMAIL
+    POLICY --> GITHUB
+    POLICY --> SLACK
+    SLACK -. "signed human approval" .-> API
+    CUSTOMER --> PRODUCT -. "signed outcome event" .-> API
 ```
-Operator (web) ──► case API ──► SQLite case store ◄── worker loop
-                                     ▲                  │
-ReportDesk customer export ──signed outcome──┘          ├─ bounded agent turn (AI SDK, Lemma)
-                                                        ├─ csv-export-v1 verifier ─► ReportDesk probe
-                                                        ├─ action ledger ─► Gmail / GitHub / Slack
-                                                        └─ reconcilers on restart and every 30 s
-Slack approver ──signed interaction──► approval binding
-```
 
-- The model proposes. It reads the case's own Gmail thread, lists and reads GitHub issues, reads Slack, selects the matching engineering issue and runs the export check. It never writes provider content.
-- Server policy decides. Every external write is recorded before dispatch with a unique logical key. The customer send re-reads the Gmail draft, the product configuration revision and the trusted recipient directory, checks a fresh passing verification and an unused approval, then sends the stored approved content.
-- Observed evidence moves the case. A closed issue, a rollout message, a passing probe or a sent email never marks recovery. Only a signed customer outcome from ReportDesk does, and the case is complete only after GitHub and Slack updates are confirmed.
+The probe and customer session call the **same export implementation**. Northstar’s broken path is therefore HTTP-successful but semantically wrong: the verifier compares the parsed CSV with a versioned tenant manifest and records `FAIL`, `PASS`, or `INCONCLUSIVE` rather than trusting the status code.
 
-| Package | Role |
+## External apps
+
+| App | Reads | Writes | Safety boundary |
+|---|---|---|---|
+| Gmail | The allowlisted support thread | Stored draft and the approved customer email | Trusted intake fixes tenant and recipient; send rechecks the stored MIME and approval hash |
+| GitHub | Candidate issues, labels, comments | Customer-impact issue and recovery comment | Tenant-scoped repository; every effect carries a unique action marker |
+| Slack | Rollout messages and threads | Engineering handoff, approval request, recovery update | Raw-body signature, timestamp window, constant-time compare, approver allowlist, nonce and expiry |
+
+Each adapter has an explicit `live`, `arga`, or `local_fixture` mode. Missing credentials fail loudly; there is no silent fixture fallback. `pnpm smoke:providers` performs one real read and one real write per configured live provider and prints the result.
+
+## Reliability is part of the workflow
+
+| Failure mode | Enforced behavior | Evidence |
+|---|---|---|
+| Provider accepts a write but the response is lost | Persist immutable intent as `DISPATCHING`; reconcile the marker after restart; never blindly resend | Worker restart and lost-send tests |
+| Draft, recipient, product revision, or verification changes after approval | Reject the send and return the case to a human | Send-policy and edited-draft tests |
+| Approval is forged, stale, duplicated, or from the wrong Slack identity | Reject before enqueueing a send | Signature/binding and E06 tests |
+| Export times out | Record `INCONCLUSIVE`; never convert uncertainty into success | Verifier timeout test |
+| Retrieved content attempts prompt injection | Model tools remain read-only; tenant, recipient, approval, and state stay server-controlled | E04 scenario |
+| Identity maps to multiple tenants | Stop for operator clarification and persist the choice | E03 scenario |
+| “Fixed” issue still produces an empty export | Keep the failed evidence, hand off, and send nothing until a human fix and passing recheck | E02 scenario |
+
+The test suite currently passes **92 behavior-focused tests across eight workspaces**. E01–E06 drive the real store, worker, ReportDesk, approval binding, and fixture provider state. Their independent checker grades captured provider effects rather than trusting the agent or ledger.
+
+| Scenario | What must be demonstrated |
 |---|---|
-| `packages/core` | Shared records, API contracts, action ledger, send policy, outcome signing |
-| `packages/store` | Case, evidence, verification, approval, run, job and clarification persistence; trusted intake; Slack approval binding |
-| `packages/providers` | Gmail, GitHub and Slack adapters (`live`, `arga`, `local_fixture`), MIME helpers, reconcilers |
-| `packages/agent` | Bounded tool-using turn (20 tool calls, 90 s) with Lemma tracing |
-| `packages/verifier` | `csv-export-v1` exact manifest check |
-| `apps/worker` | Long-running job and follow-through loop |
-| `apps/web` | Landing page, operator workspace and API |
-| `apps/reportdesk` | Demo product, customer export page, operator fix page |
-| `evals` | E01–E06 scenario runner and independent checker |
+| E01 | A valid fix survives distractor records and reaches observed recovery |
+| E02 | A closed issue with a broken export sends nothing before the human fix |
+| E03 | Ambiguous customer identity waits for an operator choice |
+| E04 | Retrieved prompt injection cannot alter scope, recipient, approval, or recovery |
+| E05 | Lost responses reconcile once after restart; unresolved outcomes remain held |
+| E06 | Edited, stale, and duplicate approvals are rejected; exactly one authorized send occurs |
 
-## Requirements
+## Inspect the evidence
 
-- Node 24 or newer, pnpm 10.33.0
-- A persistent filesystem for SQLite shared by the web app and the worker
-
-```sh
-pnpm install --frozen-lockfile
-```
-
-## Configuration
-
-Copy `.env.example` to `.env` and fill it in. Every provider mode must be set explicitly to `live`, `arga` or `local_fixture`; missing credentials fail loudly and never fall back to fixtures.
-
-| Group | Variables |
+| Artifact | What it proves |
 |---|---|
-| Rectify | `RECTIFY_DB_PATH`, `RECTIFY_OPERATOR_TOKEN`, `RECTIFY_INTAKE_DIRECTORY_JSON`, `RECTIFY_PRODUCT_EVENTS_URL`, `RECTIFY_RELEASE_ID`, `RECTIFY_COMMIT` |
-| Model and tracing | `OPENAI_API_KEY`, `RECTIFY_MODEL_ID`, `LEMMA_API_KEY`, `LEMMA_PROJECT_ID`, `LEMMA_RELEASE` |
-| Gmail | `GMAIL_MODE`, `GMAIL_SENDER_ADDRESS`, `GMAIL_OAUTH_CLIENT_ID`, `GMAIL_OAUTH_CLIENT_SECRET`, `GMAIL_OAUTH_REFRESH_TOKEN` (or `GMAIL_ACCESS_TOKEN`), `GMAIL_PROVIDER_ACCOUNT_ID` |
-| GitHub | `GITHUB_MODE`, `GITHUB_TOKEN`, `GITHUB_OWNER`, `GITHUB_REPO` |
-| Slack | `SLACK_MODE`, `SLACK_TOKEN`, `SLACK_CHANNEL_ID`, `SLACK_WORKSPACE_ID`, `SLACK_SIGNING_SECRET`, `SLACK_APPROVER_IDS` |
-| ReportDesk | `REPORTDESK_PORT`, `REPORTDESK_BASE_URL`, `REPORTDESK_PUBLIC_URL`, `REPORTDESK_ENVIRONMENT`, `REPORTDESK_PROBE_TOKEN`, `REPORTDESK_OPERATOR_TOKEN`, `REPORTDESK_OPERATOR_ID`, `REPORTDESK_CUSTOMER_TOKEN`, `REPORTDESK_OUTCOME_SECRET` |
-| Arga | `GMAIL_ARGA_*`, `GITHUB_ARGA_*`, `SLACK_ARGA_*` |
+| [Recorded workflow evidence](docs/demo/v2/workflow-evidence.json) | Real-model run: 10 tool calls in 21.691 s; failed then passing export; seven confirmed actions; `RECOVERED` and sync `COMPLETE` |
+| [Independent evaluation manifest](evals/final-run-manifest.redacted.json) | The final 18-trial real-model benchmark is honestly marked `NOT_RUN`, including the missing prerequisites |
+| [System and reliability brief](docs/SYSTEM_AND_RELIABILITY.md) | Trust boundaries, state ownership, approval binding, reconciliation, recovery rules, and evaluation method |
+| [Video verification](docs/demo/v2/verification.json) | 120 s, 1920×1080, 30 fps, full decode and blank-frame checks passing |
+| [Editable demo source](video/README.md) | Capture, narration, captions, render, and reproduction details |
 
-`RECTIFY_INTAKE_DIRECTORY_JSON` is the trusted directory. Email content can never add a tenant or recipient:
+## What is real, fixture-backed, and not run
 
-```json
-[{ "gmailThreadId": "thread-id", "organizationId": "org", "tenantId": "northstar", "contactId": "contact-maya", "contactEmail": "maya@northstar.example" }]
-```
-
-Provider permissions: Gmail OAuth with the `gmail.modify` scope on the support mailbox; a fine-grained GitHub token limited to one repository with Issues read and write; a Slack bot token with `chat:write` and `channels:history`, with Interactivity pointing at `https://<rectify-host>/api/slack/interactions`.
+| Capability | Status |
+|---|---|
+| Case store, durable job queue, action ledger, approvals, clarifications, API and operator workspace | Implemented and locally tested |
+| Full Northstar recovery loop | Recorded with a real model, real SQLite and ReportDesk, fixture Gmail/GitHub/Slack |
+| Gmail, GitHub, and Slack remote adapters plus reconciliation | Implemented and contract-tested; live credentials were not exercised in the recording |
+| E01–E06 harness and independent checker | Implemented; harness tests pass with scripted models, which is not a benchmark result |
+| Docker image and three-process restart persistence | Built and runtime-smoked locally |
+| Openable Lemma trace | Not verified; the recorded run’s trace ID is null |
+| Final E01–E06 × 3 real-model evaluation, live-provider smoke, Arga twins | `NOT RUN` |
 
 ## Run locally
 
+Requirements: Node 24+, pnpm 10.33.0, and a persistent filesystem shared by the web process and worker for SQLite.
+
 ```sh
+pnpm install --frozen-lockfile
+cp .env.example .env
 pnpm dev:local
 ```
 
-This starts the web app (`:3000`), ReportDesk (`REPORTDESK_PORT`) and the worker with the variables from `.env`. With every provider mode set to `local_fixture`, the Northstar thread `thread-northstar-export`, its distractor issues and the rollout message are available as labelled fixtures.
+Set each provider mode explicitly. For a credential-free local walkthrough use `GMAIL_MODE=local_fixture`, `GITHUB_MODE=local_fixture`, and `SLACK_MODE=local_fixture`, then provide the non-provider secrets listed in [.env.example](.env.example). Open `/sign-in`, enter `RECTIFY_OPERATOR_TOKEN`, and create a case from `thread-northstar-export`.
 
-Rehearsal:
+1. Press **Investigate**. With no model key, Rectify stops for a human and explains why; it never substitutes a scripted answer.
+2. In ReportDesk `/operator`, enable the corrected export path, then press **Recheck workflow** in Rectify.
+3. Approve the exact message. Live Slack uses **Approve and send**; fixtures use `pnpm approve:local <caseId>` through the same signed callback boundary.
+4. Follow the customer link, authenticate, and export. The signed outcome moves the case to `RECOVERED`; confirmed GitHub and Slack updates complete synchronization.
 
-1. Open `/sign-in`, enter `RECTIFY_OPERATOR_TOKEN`, then open the case from `thread-northstar-export` and press **Investigate**. Without a model key the case stops for a human and says why.
-2. Open ReportDesk `/operator` and enable the corrected export path, then press **Recheck workflow**.
-3. Approve the exact message. In live Slack the approver clicks **Approve and send**. With fixture Slack, `pnpm approve:local <caseId>` sends the same Slack-signed interaction to the app.
-4. Open the link in the sent email (ReportDesk `/customer?case=<caseId>`), enter the customer token and export. Rectify records recovery and finishes the GitHub and Slack updates.
-
-## Verification
+## Verify and evaluate
 
 ```sh
 pnpm lint
@@ -113,39 +160,33 @@ pnpm build
 pnpm format:check
 ```
 
-Provider smoke, one real read and one real write per provider:
-
-```sh
-pnpm smoke:providers
-```
-
-## Evaluation
-
-The scenario runner drives E01–E06 through the real store, worker, ReportDesk and approval binding with fixture providers, captures each trial's actual state, and refuses to run without a real model:
+The real-model runner requires three trials per scenario and refuses to write a successful manifest without independent verdicts:
 
 ```sh
 RECTIFY_EVAL_ARTIFACT_DIR=./eval-artifacts RECTIFY_EVAL_OUTCOME_SECRET=<secret> pnpm eval:run
 RECTIFY_EVAL_ARTIFACT_DIR=./eval-artifacts RECTIFY_EVAL_RESULTS_DIR=./eval-results RECTIFY_EVAL_OUTCOME_SECRET=<secret> pnpm eval
 ```
 
-The checker ignores agent-written claims and grades provider effects, tenant scope, approvals, signed outcomes, deduplication and scenario-specific safety outcomes.
+## Project map
 
-## Deploy
+| Path | Responsibility |
+|---|---|
+| `packages/core` | Browser-safe records and API schemas; outcome signing, send policy, and ledger through server-only subpaths |
+| `packages/store` | SQLite cases, evidence, runs, jobs, approvals, trusted intake, and Slack binding |
+| `packages/providers` | Typed Gmail, GitHub, and Slack adapters, MIME handling, markers, and reconcilers |
+| `packages/agent` | Vercel AI SDK bounded turn with narrow tools and Lemma instrumentation |
+| `packages/verifier` | Exact `csv-export-v1` manifest comparison |
+| `apps/web` / `apps/worker` | Operator UI and API / persistent execution and reconciliation |
+| `apps/reportdesk` | Demo product sharing one export path between probe and customer session |
+| `evals` | Six scenarios, captured external effects, and independent checker |
 
-One host with a persistent volume runs all three processes:
+## Engineering choices worth inspecting
 
-```sh
-docker build -t rectify .
-docker run -p 3000:3000 -p 3100:3100 -v rectify-data:/data --env-file .env rectify
-```
-
-Set `RECTIFY_DB_PATH=/data/rectify.sqlite`, `RECTIFY_PRODUCT_EVENTS_URL=http://127.0.0.1:3000/api/product-events`, `REPORTDESK_BASE_URL=http://127.0.0.1:3100`, and `REPORTDESK_PUBLIC_URL` to the public ReportDesk address used in the customer email link. `pnpm start:all` runs the same supervisor without Docker after `pnpm --filter @rectify/web build`.
+- **Recovery is a product event, not a model judgment.** Only a fresh, tenant-bound, signed customer action matching the passing configuration revision can recover a case.
+- **Exactly-once is not claimed.** SQLite cannot atomically commit with Gmail, GitHub, or Slack, so Rectify implements intent-first writes, unique logical keys, explicit `OUTCOME_UNKNOWN`, and provider-specific reconciliation.
+- **Approval binds facts, not a button click.** The recipient, message bytes, draft, provider account, product revision, verification, Slack location, approver, nonce, and expiry are all checked again at dispatch.
+- **The model is useful but not authoritative.** It resolves messy cross-app evidence; deterministic code controls identities, mutations, state transitions, limits, and recovery.
 
 ## Known limitations
 
-- One workflow (`csv-export-v1`), one organization, one mailbox, one repository, one Slack channel.
-- ReportDesk keeps tenant configuration in memory; restarting it resets the demo fix.
-- Verification and approval expire after five minutes by design; a slow approver must recheck.
-- Reconciliation searches the most recent 50 issues, 100 comments and 100 Slack messages; anything older stays `OUTCOME_UNKNOWN` and is held for a human.
-- The scenario runner supports fixture providers only; it does not reset live or Arga provider state.
-- No claim of exactly-once delivery across SQLite and external providers, arbitrary-product verification, or universal prompt-injection resistance.
+Rectify currently supports one verification contract, one organization, one mailbox, one repository, and one Slack channel. ReportDesk tenant configuration is in memory and resets with the demo service. Reconciliation searches bounded provider windows. The evaluator resets fixture providers only. Deployment assumes one host with persistent SQLite shared by the web app and worker. The project does not claim arbitrary-product verification, exactly-once cross-provider delivery, universal prompt-injection resistance, or measured revenue and churn impact.
