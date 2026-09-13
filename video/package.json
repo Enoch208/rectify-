@@ -1,0 +1,24 @@
+{
+  "name": "rectify-demo-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "runtime": "node scripts/runtime.mjs",
+    "capture": "node scripts/capture.mjs",
+    "narrate": "node scripts/narrate.mjs",
+    "render": "node scripts/render.mjs",
+    "prepare": "node scripts/prepare.mjs",
+    "mix": "node scripts/mix.mjs",
+    "delivery": "node scripts/delivery.mjs",
+    "verify": "node scripts/verify.mjs",
+    "preview": "node scripts/preview.mjs"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.491",
+    "@remotion/renderer": "4.0.491",
+    "puppeteer-core": "24.31.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "remotion": "4.0.491"
+  }
+}

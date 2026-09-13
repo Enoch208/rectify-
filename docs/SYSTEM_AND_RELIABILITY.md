@@ -34,7 +34,7 @@ Before dispatch the worker re-reads the Gmail draft, the product's current confi
 
 ## Recovery
 
-ReportDesk's customer page and Rectify's probe call the same export implementation. Only a customer session signs an outcome event, and ReportDesk delivers it to Rectify even if the export page is closed, recording each delivery attempt. Rectify accepts the event only with a valid signature, a customer actor, a fresh timestamp, the case's tenant, the latest passing verification's revisions, and a unique event ID. Recovery then moves synchronization to `PENDING`; the case becomes `COMPLETE` only after the GitHub and Slack recovery updates are confirmed.
+ReportDesk's customer page and Rectify's probe call the same export implementation. Only a customer session signs an outcome event, and ReportDesk delivers it to Rectify even if the export page is closed, recording each delivery attempt. Rectify accepts the event only with a valid signature, a customer actor, a fresh timestamp, the case's tenant, the latest passing verification's revisions, and a unique event ID. The case becomes `RECOVERED` with synchronization `PENDING`; synchronization becomes `COMPLETE` only after the GitHub and Slack recovery updates are confirmed.
 
 ## Identity and scope
 
@@ -53,7 +53,8 @@ Tests run the same harness with scripted models. They validate the harness and c
 - Reliability tests pass: lost send reconciled after restart without resend, unresolvable send held, edited draft blocked, expired approval, missing model, ambiguous identity.
 - The three processes were started together locally with fixture providers: a queued investigation was processed by the worker and stopped for a human because no model was configured.
 - Live Gmail, GitHub and Slack: `NOT RUN`.
-- Real model investigation turn and openable Lemma trace: `NOT RUN`.
+- Real model walkthrough: passed with `gpt-5.4-mini-2026-03-17`, 10 tool calls in 21.691 seconds; the recorded Northstar case reached `RECOVERED` with synchronization `COMPLETE` using local fixture providers.
+- Openable Lemma trace: not verified; the recorded run's trace ID was null.
 - Final E01–E06 × 3 evaluation with a real model: `NOT RUN`.
 - Arga twins: `NOT RUN`.
 - Docker image build and three-process runtime smoke: passed locally, including case persistence across a container restart.

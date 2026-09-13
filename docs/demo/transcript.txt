@@ -1,0 +1,23 @@
+Closed isn’t fixed.
+A ticket closes. Engineering says the fix is live. But the customer still can't get their work done. Rectify connects the complaint, the engineering evidence, and the customer's actual workflow, then follows through until recovery is observed. Let's walk through it.
+
+Start with the customer
+We're using labelled local fixtures for this recording. Maya at Northstar reports an empty CSV export. Opening her Gmail thread creates a case using the trusted customer directory.
+
+Check what actually happened
+Investigate starts a real model turn. It reads the complaint, compares plausible GitHub issues, checks the Slack rollout claim, and runs Northstar's export. The issue is closed, but the workflow check fails.
+
+HTTP 200. Customer still blocked.
+Here's the gap: the request succeeded, but the expected records are missing. Rectify records the evidence, creates a customer-impact issue and a Slack handoff, and keeps the resolution message blocked.
+
+A human applies the correction
+In ReportDesk, an operator enables the corrected export path. This is an explicit human configuration change, with an audit event and a new revision. Recheck runs the same customer workflow again. This time, it passes.
+
+Approve the exact message
+Now the customer message is ready for review. Approval binds the recipient, wording, and passing check. For this fixture recording, the local helper submits a signed approval through the same validation endpoint. The worker confirms one send.
+
+Let the customer prove recovery
+Sending isn't recovery. Maya opens ReportDesk in a customer session and runs the export herself. The expected rows appear. Only that successful customer operation produces the signed outcome event.
+
+Recovery, with the evidence to show it
+The customer has recovered, and cross-app updates are confirmed. Rectify keeps engineering status, verification, notification, and recovery separate. Every conclusion has evidence.

@@ -1,0 +1,97 @@
+WEBVTT
+
+00:00:00.180 --> 00:00:03.480
+A ticket closes. Engineering says the fix is live.
+
+00:00:04.320 --> 00:00:07.260
+But the customer still can't get their work done.
+
+00:00:07.360 --> 00:00:11.980
+Rectify connects the complaint, the engineering evidence, and the customer's
+
+00:00:12.060 --> 00:00:16.080
+actual workflow, then follows through until recovery is observed.
+
+00:00:16.760 --> 00:00:18.080
+Let's walk through it.
+
+00:00:19.840 --> 00:00:22.400
+We're using labelled local fixtures for this recording.
+
+00:00:22.990 --> 00:00:26.070
+Maya at Northstar reports an empty CSV export.
+
+00:00:26.660 --> 00:00:29.700
+Opening her Gmail thread creates a case using the trusted
+
+00:00:29.800 --> 00:00:33.880
+customer directory. Investigate starts a real model turn.
+
+00:00:34.280 --> 00:00:38.460
+It reads the complaint, compares plausible GitHub issues, checks the
+
+00:00:38.540 --> 00:00:41.740
+Slack rollout claim, and runs Northstar's export.
+
+00:00:42.680 --> 00:00:45.480
+The issue is closed, but the workflow check fails.
+
+00:00:46.300 --> 00:00:50.630
+Here's the gap: the request succeeded, but the expected records
+
+00:00:50.640 --> 00:00:56.100
+are missing. Rectify records the evidence, creates a customer-impact issue
+
+00:00:56.440 --> 00:00:59.930
+and a Slack handoff, and keeps the resolution message blocked.
+
+00:01:00.960 --> 00:01:05.000
+In ReportDesk, an operator enables the corrected export path.
+
+00:01:05.080 --> 00:01:08.340
+This is an explicit human configuration change, with an audit
+
+00:01:08.400 --> 00:01:09.710
+event and a new revision.
+
+00:01:10.340 --> 00:01:12.830
+Recheck runs the same customer workflow again.
+
+00:01:13.660 --> 00:01:15.600
+This time, it passes.
+
+00:01:15.700 --> 00:01:18.040
+Now the customer message is ready for review.
+
+00:01:18.760 --> 00:01:22.260
+Approval binds the recipient, wording, and passing check.
+
+00:01:22.960 --> 00:01:26.350
+For this fixture recording, the local helper submits a signed
+
+00:01:26.380 --> 00:01:29.000
+approval through the same validation endpoint.
+
+00:01:29.670 --> 00:01:31.560
+The worker confirms one send.
+
+00:01:32.400 --> 00:01:36.970
+Sending isn't recovery. Maya opens ReportDesk in a customer session
+
+00:01:36.980 --> 00:01:38.520
+and runs the export herself.
+
+00:01:39.190 --> 00:01:40.660
+The expected rows appear.
+
+00:01:41.100 --> 00:01:46.039
+Only that successful customer operation produces the signed outcome event.
+
+00:01:46.070 --> 00:01:49.210
+The customer has recovered, and cross-app updates are confirmed.
+
+00:01:49.880 --> 00:01:55.040
+Rectify keeps engineering status, verification, notification, and recovery separate.
+
+00:01:55.620 --> 00:01:57.080
+Every conclusion has evidence.

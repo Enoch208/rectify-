@@ -4,6 +4,10 @@
 
 The demo product is ReportDesk. A customer at Northstar Research reports an empty monthly CSV export. The engineering issue is closed and Slack says the rollout is complete, but the export still returns HTTP 200 with no records for Northstar. Rectify catches that, opens a customer-impact issue, posts a Slack handoff, waits for a human-applied configuration fix, rechecks, requests approval for the exact email, sends it, and observes the customer's own successful export.
 
+**[Watch the two-minute narrated demo](https://enoch208.github.io/rectify-/demo/)** · [Download MP4](https://enoch208.github.io/rectify-/demo/rectify-demo.mp4) · [Editable recording source](video/README.md)
+
+The demo uses the actual application with a real investigation model and explicitly labelled local fixtures for Gmail, GitHub and Slack. It includes English captions and a transcript; no login is required.
+
 ## Status
 
 | Area | State |
@@ -14,13 +18,16 @@ The demo product is ReportDesk. A customer at Northstar Research reports an empt
 | Operator workspace, sign-in, case and run views | Implemented, locally tested in a browser |
 | ReportDesk demo product with customer and operator pages | Implemented, locally tested |
 | E01–E06 scenario runner and independent checker | Implemented; each scenario passes the checker in tests with scripted models (not a benchmark result) |
-| Live Gmail, GitHub and Slack | `NOT RUN` until credentials and controlled resources are supplied |
-| Real model investigation turn and openable Lemma trace | `NOT RUN` until `OPENAI_API_KEY`, `RECTIFY_MODEL_ID` and Lemma keys are supplied |
+| Live Gmail, GitHub and Slack | Not exercised in the recorded walkthrough; providers are explicitly `LOCAL FIXTURE` |
+| Real model investigation turn | Recorded successfully with `gpt-5.4-mini-2026-03-17`: 10 tool calls, 21.691 seconds; complete fixture-backed recovery flow |
+| Openable Lemma trace | Not verified; the recorded run's trace ID was null |
 | Final 18-trial evaluation with a real model | `NOT RUN` |
 | Arga twins | `NOT RUN` |
 | Docker deployment | Built and runtime-smoked locally with all three processes and persistent SQLite restart state |
 
 Fixture-backed results are labelled `LOCAL FIXTURE` everywhere they appear and are never presented as live provider results.
+
+External apps: Gmail supplies the support thread and approved customer email; GitHub supplies engineering issues and customer-impact follow-through; Slack supplies rollout claims, engineering handoff and human approval. OpenAI provides the bounded investigation model, and Lemma instrumentation is present for tracing. ReportDesk is the included demo product, not an external service. [Recording source and reproduction notes](video/README.md) distinguish the recorded fixture workflow from live integrations and benchmark results.
 
 ## How it works
 

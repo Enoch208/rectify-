@@ -1,0 +1,58 @@
+[
+  {
+    "id": "01-landing",
+    "seconds": 20,
+    "title": "Closed isn’t fixed.",
+    "subtitle": "From a customer complaint to observed recovery",
+    "narration": "A ticket closes. Engineering says the fix is live. But the customer still can't get their work done. Rectify connects the complaint, the engineering evidence, and the customer's actual workflow, then follows through until recovery is observed. Let's walk through it."
+  },
+  {
+    "id": "02-intake",
+    "seconds": 12,
+    "title": "Start with the customer",
+    "subtitle": "Trusted identity · one persistent case",
+    "narration": "We're using labelled local fixtures for this recording. Maya at Northstar reports an empty CSV export. Opening her Gmail thread creates a case using the trusted customer directory."
+  },
+  {
+    "id": "03-investigate",
+    "seconds": 15,
+    "title": "Check what actually happened",
+    "subtitle": "Real model investigation · waiting time shortened",
+    "narration": "Investigate starts a real model turn. It reads the complaint, compares plausible GitHub issues, checks the Slack rollout claim, and runs Northstar's export. The issue is closed, but the workflow check fails."
+  },
+  {
+    "id": "04-failure",
+    "seconds": 15,
+    "title": "HTTP 200. Customer still blocked.",
+    "subtitle": "Expected records missing · no resolution email",
+    "narration": "Here's the gap: the request succeeded, but the expected records are missing. Rectify records the evidence, creates a customer-impact issue and a Slack handoff, and keeps the resolution message blocked."
+  },
+  {
+    "id": "05-fix",
+    "seconds": 15,
+    "title": "A human applies the correction",
+    "subtitle": "ReportDesk configuration change · audited revision",
+    "narration": "In ReportDesk, an operator enables the corrected export path. This is an explicit human configuration change, with an audit event and a new revision. Recheck runs the same customer workflow again. This time, it passes."
+  },
+  {
+    "id": "06-approval",
+    "seconds": 17,
+    "title": "Approve the exact message",
+    "subtitle": "Local Slack-signed approval · fixture send",
+    "narration": "Now the customer message is ready for review. Approval binds the recipient, wording, and passing check. For this fixture recording, the local helper submits a signed approval through the same validation endpoint. The worker confirms one send."
+  },
+  {
+    "id": "07-customer",
+    "seconds": 14,
+    "title": "Let the customer prove recovery",
+    "subtitle": "Authenticated customer session · real export",
+    "narration": "Sending isn't recovery. Maya opens ReportDesk in a customer session and runs the export herself. The expected rows appear. Only that successful customer operation produces the signed outcome event."
+  },
+  {
+    "id": "08-recovered",
+    "seconds": 12,
+    "title": "Recovery, with the evidence to show it",
+    "subtitle": "Customer recovered · cross-app updates confirmed",
+    "narration": "The customer has recovered, and cross-app updates are confirmed. Rectify keeps engineering status, verification, notification, and recovery separate. Every conclusion has evidence."
+  }
+]

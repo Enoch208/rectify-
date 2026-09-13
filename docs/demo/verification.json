@@ -1,0 +1,47 @@
+{
+  "duration": 120,
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "frames": 3600,
+  "fullDecode": "PASS",
+  "blankFrameCheck": "PASS",
+  "voice": {
+    "input_i": "-16.60",
+    "input_tp": "-4.50",
+    "input_lra": "2.20",
+    "input_thresh": "-27.03",
+    "output_i": "-15.99",
+    "output_tp": "-3.77",
+    "output_lra": "2.30",
+    "output_thresh": "-26.41",
+    "normalization_type": "dynamic",
+    "target_offset": "-0.01"
+  },
+  "music": {
+    "input_i": "-38.35",
+    "input_tp": "-23.28",
+    "input_lra": "11.80",
+    "input_thresh": "-48.99",
+    "output_i": "-16.15",
+    "output_tp": "-1.50",
+    "output_lra": "8.70",
+    "output_thresh": "-26.86",
+    "normalization_type": "dynamic",
+    "target_offset": "0.15"
+  },
+  "mix": {
+    "input_i": "-16.63",
+    "input_tp": "-4.37",
+    "input_lra": "2.20",
+    "input_thresh": "-27.31",
+    "output_i": "-15.97",
+    "output_tp": "-3.64",
+    "output_lra": "2.30",
+    "output_thresh": "-26.64",
+    "normalization_type": "dynamic",
+    "target_offset": "-0.03"
+  },
+  "voiceMusicGapLU": 21.75,
+  "captionTiming": "ElevenLabs word-level forced alignment against the final narration track"
+}
