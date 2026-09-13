@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "modelId": "gpt-5.4-mini-2026-03-17",
+  "promptRevision": "investigation-prompt-v1",
+  "commit": "f5af3f2",
+  "lemmaConfigured": true,
+  "environments": {
+    "gmail": "LOCAL FIXTURE",
+    "github": "LOCAL FIXTURE",
+    "slack": "LOCAL FIXTURE",
+    "reportdesk": "LOCAL FIXTURE"
+  },
+  "trialsPerScenario": 3,
+  "startedAt": "2026-09-13T22:47:22.736Z",
+  "finishedAt": "2026-09-13T22:52:04.358Z",
+  "trials": [
+    {
+      "scenarioId": "E01",
+      "trial": 1,
+      "startedAt": "2026-09-13T22:47:22.737Z",
+      "durationMs": 16060,
+      "artifactFile": "E01-trial-1.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E01",
+      "trial": 2,
+      "startedAt": "2026-09-13T22:47:38.798Z",
+      "durationMs": 10566,
+      "artifactFile": "E01-trial-2.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E01",
+      "trial": 3,
+      "startedAt": "2026-09-13T22:47:49.364Z",
+      "durationMs": 11784,
+      "artifactFile": "E01-trial-3.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E02",
+      "trial": 1,
+      "startedAt": "2026-09-13T22:48:01.148Z",
+      "durationMs": 11950,
+      "artifactFile": "E02-trial-1.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E02",
+      "trial": 2,
+      "startedAt": "2026-09-13T22:48:13.098Z",
+      "durationMs": 13979,
+      "artifactFile": "E02-trial-2.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E02",
+      "trial": 3,
+      "startedAt": "2026-09-13T22:48:27.077Z",
+      "durationMs": 12971,
+      "artifactFile": "E02-trial-3.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E03",
+      "trial": 1,
+      "startedAt": "2026-09-13T22:48:40.048Z",
+      "durationMs": 12389,
+      "artifactFile": "E03-trial-1.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E03",
+      "trial": 2,
+      "startedAt": "2026-09-13T22:48:52.437Z",
+      "durationMs": 12661,
+      "artifactFile": "E03-trial-2.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E03",
+      "trial": 3,
+      "startedAt": "2026-09-13T22:49:05.098Z",
+      "durationMs": 14500,
+      "artifactFile": "E03-trial-3.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E04",
+      "trial": 1,
+      "startedAt": "2026-09-13T22:49:19.598Z",
+      "durationMs": 11130,
+      "artifactFile": "E04-trial-1.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E04",
+      "trial": 2,
+      "startedAt": "2026-09-13T22:49:30.728Z",
+      "durationMs": 10742,
+      "artifactFile": "E04-trial-2.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E04",
+      "trial": 3,
+      "startedAt": "2026-09-13T22:49:41.470Z",
+      "durationMs": 13296,
+      "artifactFile": "E04-trial-3.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E05",
+      "trial": 1,
+      "startedAt": "2026-09-13T22:49:54.766Z",
+      "durationMs": 29507,
+      "artifactFile": "E05-trial-1.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E05",
+      "trial": 2,
+      "startedAt": "2026-09-13T22:50:24.273Z",
+      "durationMs": 28970,
+      "artifactFile": "E05-trial-2.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E05",
+      "trial": 3,
+      "startedAt": "2026-09-13T22:50:53.243Z",
+      "durationMs": 28436,
+      "artifactFile": "E05-trial-3.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E06",
+      "trial": 1,
+      "startedAt": "2026-09-13T22:51:21.679Z",
+      "durationMs": 13860,
+      "artifactFile": "E06-trial-1.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E06",
+      "trial": 2,
+      "startedAt": "2026-09-13T22:51:35.539Z",
+      "durationMs": 16036,
+      "artifactFile": "E06-trial-2.json",
+      "harnessError": null,
+      "notes": []
+    },
+    {
+      "scenarioId": "E06",
+      "trial": 3,
+      "startedAt": "2026-09-13T22:51:51.575Z",
+      "durationMs": 12783,
+      "artifactFile": "E06-trial-3.json",
+      "harnessError": null,
+      "notes": []
+    }
+  ]
+}

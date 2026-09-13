@@ -1,0 +1,466 @@
+{
+  "schemaVersion": 1,
+  "scenarioId": "E01",
+  "trial": 3,
+  "capturedAt": "2026-09-13T22:48:01.145Z",
+  "environments": {
+    "gmail": "LOCAL FIXTURE",
+    "github": "LOCAL FIXTURE",
+    "slack": "LOCAL FIXTURE",
+    "reportdesk": "LOCAL FIXTURE"
+  },
+  "case": {
+    "id": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+    "version": 7,
+    "organizationId": "reportdesk",
+    "tenantId": "northstar",
+    "contactId": "contact-maya",
+    "contactEmail": "maya@northstar.example",
+    "sourceThreadId": "thread-northstar-export",
+    "matchedEngineeringIssueId": "41",
+    "workflow": "csv-export-v1",
+    "workflowVersion": 1,
+    "state": "RECOVERED",
+    "engineeringState": "CLOSED",
+    "latestVerificationId": "0245c019-390a-49dc-957f-4d6244755906",
+    "notificationState": "SENT",
+    "recoveryState": "OBSERVED",
+    "syncState": "COMPLETE",
+    "needsHumanReason": null,
+    "resumeState": null,
+    "createdAt": "2026-09-13T22:47:49.391Z",
+    "updatedAt": "2026-09-13T22:48:01.144Z"
+  },
+  "evidence": [
+    {
+      "id": "8ee47a03-df67-40ab-bc1d-5c4c16c1416c",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "provider": "gmail",
+      "sourceId": "message-northstar-1",
+      "sourceUrl": null,
+      "retrievedAt": "2026-09-13T22:47:50.902Z",
+      "factKind": "REPORTED",
+      "fact": "Customer thread message \"Monthly report export still empty\" reports: Hi, our monthly report export is still empty. We need it for tomorrow's review. Can you check the August report? Maya Operations lead, Northstar Research",
+      "redactedContent": "Hi, our monthly report export is still empty. We need it for tomorrow's review. Can you check the August report? Maya Operations lead, Northstar Research",
+      "contentHash": "629f51e1c8b7cf6a60d5803a98da4daf90ea9392b8df068595344f43718e8d75",
+      "environment": "LOCAL FIXTURE"
+    },
+    {
+      "id": "f3fc69c2-aa16-4f7e-b09e-66f6436e9404",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "provider": "github",
+      "sourceId": "41",
+      "sourceUrl": "https://github.local/reportdesk/app/issues/41",
+      "retrievedAt": "2026-09-13T22:47:55.742Z",
+      "factKind": "REPORTED",
+      "fact": "Engineering issue #41 \"Monthly CSV export returns an empty file\" is closed on GitHub. This is a status claim, not proof of customer recovery.",
+      "redactedContent": "Monthly CSV export returns an empty file Monthly exports returned HTTP 200 with no records. Fixed by the corrected export path; merged and rolled out.",
+      "contentHash": "c1d5a912d33fcc13143a3ab94f59609ee23ffb5d01598aef0fa49fada9c53594",
+      "environment": "LOCAL FIXTURE"
+    },
+    {
+      "id": "21500bff-478d-4b08-b27b-b47470a4bd12",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "provider": "github",
+      "sourceId": "39",
+      "sourceUrl": "https://github.local/reportdesk/app/issues/39",
+      "retrievedAt": "2026-09-13T22:47:55.743Z",
+      "factKind": "REPORTED",
+      "fact": "Engineering issue #39 \"Weekly CSV export is missing the header row\" is closed on GitHub. This is a status claim, not proof of customer recovery.",
+      "redactedContent": "Weekly CSV export is missing the header row Weekly exports omitted the header. Fixed in #40.",
+      "contentHash": "011aee27557bc11df818d032d7ee72c78b782876025aa0630c57d2aa147699c8",
+      "environment": "LOCAL FIXTURE"
+    },
+    {
+      "id": "645ddb11-1e4e-4e51-9d41-05e578d6be8c",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "provider": "slack",
+      "sourceId": "1757779200.000200",
+      "sourceUrl": null,
+      "retrievedAt": "2026-09-13T22:47:55.744Z",
+      "factKind": "REPORTED",
+      "fact": "Slack message states: Rollout of the monthly CSV export fix (#41) is complete for all tenants.",
+      "redactedContent": "Rollout of the monthly CSV export fix (#41) is complete for all tenants.",
+      "contentHash": "821425f1113590dd873723296f7e12177d8481d387c87afb00d22861908e80d3",
+      "environment": "LOCAL FIXTURE"
+    },
+    {
+      "id": "4cba01e9-c6f6-47bf-bbc2-f5646dbdd166",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "provider": "slack",
+      "sourceId": "1757775600.000100",
+      "sourceUrl": null,
+      "retrievedAt": "2026-09-13T22:47:55.744Z",
+      "factKind": "REPORTED",
+      "fact": "Slack message states: Heads up: invoice PDF rounding (#38) is still being investigated.",
+      "redactedContent": "Heads up: invoice PDF rounding (#38) is still being investigated.",
+      "contentHash": "c607e7b71afecb39e94b14cb5dbd2e78930cbabe980615f7660681d01ee97501",
+      "environment": "LOCAL FIXTURE"
+    }
+  ],
+  "verifications": [
+    {
+      "id": "0245c019-390a-49dc-957f-4d6244755906",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "contractVersion": "csv-export-v1",
+      "input": {
+        "tenantId": "northstar",
+        "period": "2026-08",
+        "manifestRevision": 1,
+        "appRevision": 1,
+        "configRevision": 2,
+        "probeCredentialId": "eval-probe"
+      },
+      "requestId": "8b483e55-49f9-437c-9cba-24ab4261d81b",
+      "expected": {
+        "schema": [
+          "record_id",
+          "tenant_id",
+          "period",
+          "amount",
+          "status"
+        ],
+        "rows": [
+          {
+            "recordId": "ns-2026-08-001",
+            "tenantId": "northstar",
+            "period": "2026-08",
+            "amount": "1250.00",
+            "status": "settled"
+          }
+        ]
+      },
+      "observed": {
+        "httpStatus": 200,
+        "schema": [
+          "record_id",
+          "tenant_id",
+          "period",
+          "amount",
+          "status"
+        ],
+        "rows": [
+          {
+            "recordId": "ns-2026-08-001",
+            "tenantId": "northstar",
+            "period": "2026-08",
+            "amount": "1250.00",
+            "status": "settled"
+          }
+        ],
+        "failureReason": null
+      },
+      "responseHash": "392dd5f07b831b962a5aadd25f0faadf6c89570508d0f8d0debc7e653bb1b901",
+      "normalizedContentHash": "97e9ae4c7ca8229a09d746fd262c14f9968e42993b170d484ed75c41371ee0d8",
+      "result": "PASS",
+      "verifiedAt": "2026-09-13T22:47:58.184Z"
+    }
+  ],
+  "actions": [
+    {
+      "id": "60545cf9-abcf-4dbb-af28-26b10efa02e1",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "version": 1,
+      "logicalKey": "case:4a5ec777-01d0-4326-bed5-3986f79f460b:customer-draft:0245c019-390a-49dc-957f-4d6244755906",
+      "provider": "gmail",
+      "kind": "CREATE_CUSTOMER_DRAFT",
+      "payload": {
+        "approvedMime": "From: support@reportdesk.example\r\nTo: maya@northstar.example\r\nSubject: Re: Monthly report export still empty\r\nMessage-ID: <rectify-e9ab37f2d354a0d95b1c7ebb0813f658@reportdesk.example>\r\nX-Rectify-Action: case:4a5ec777-01d0-4326-bed5-3986f79f460b:customer-draft:0245c019-390a-49dc-957f-4d6244755906\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=\"UTF-8\"\r\nContent-Transfer-Encoding: 8bit\r\n\r\nHello,\n\nWe re-ran the monthly CSV export for your workspace for the 2026-08 reporting period, and it now returns the records we expect.\n\nPlease try the export again here: http://127.0.0.1:55845/customer?case=4a5ec777-01d0-4326-bed5-3986f79f460b\n\nIf it still does not work for you, reply to this email and we will look into it straight away.\n\nReportDesk Support",
+        "body": "Hello,\n\nWe re-ran the monthly CSV export for your workspace for the 2026-08 reporting period, and it now returns the records we expect.\n\nPlease try the export again here: http://127.0.0.1:55845/customer?case=4a5ec777-01d0-4326-bed5-3986f79f460b\n\nIf it still does not work for you, reply to this email and we will look into it straight away.\n\nReportDesk Support",
+        "recipient": "maya@northstar.example",
+        "rfc822MessageId": "rectify-e9ab37f2d354a0d95b1c7ebb0813f658@reportdesk.example",
+        "sender": "support@reportdesk.example",
+        "subject": "Re: Monthly report export still empty",
+        "threadId": "thread-northstar-export",
+        "verificationId": "0245c019-390a-49dc-957f-4d6244755906"
+      },
+      "payloadHash": "9d6433e8c4b6375c3bf8ae4fd8faa5fb1c5a927c23188730e69ef986949a8076",
+      "status": "CONFIRMED",
+      "attempts": [
+        {
+          "number": 1,
+          "startedAt": "2026-09-13T22:48:01.083Z",
+          "finishedAt": "2026-09-13T22:48:01.084Z",
+          "outcome": "CONFIRMED",
+          "error": null
+        }
+      ],
+      "providerIds": [
+        "fixture-draft-1",
+        "fixture-message-1"
+      ],
+      "uncertaintyReason": null,
+      "error": null,
+      "createdAt": "2026-09-13T22:48:01.078Z",
+      "updatedAt": "2026-09-13T22:48:01.084Z"
+    },
+    {
+      "id": "57b0d660-0f9c-4d0a-9882-c67b31c4c6d7",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "version": 1,
+      "logicalKey": "case:4a5ec777-01d0-4326-bed5-3986f79f460b:customer-send:0245c019-390a-49dc-957f-4d6244755906",
+      "provider": "gmail",
+      "kind": "SEND_CUSTOMER_EMAIL",
+      "payload": {
+        "approvedMime": "From: support@reportdesk.example\r\nTo: maya@northstar.example\r\nSubject: Re: Monthly report export still empty\r\nMessage-ID: <rectify-e9ab37f2d354a0d95b1c7ebb0813f658@reportdesk.example>\r\nX-Rectify-Action: case:4a5ec777-01d0-4326-bed5-3986f79f460b:customer-draft:0245c019-390a-49dc-957f-4d6244755906\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=\"UTF-8\"\r\nContent-Transfer-Encoding: 8bit\r\n\r\nHello,\n\nWe re-ran the monthly CSV export for your workspace for the 2026-08 reporting period, and it now returns the records we expect.\n\nPlease try the export again here: http://127.0.0.1:55845/customer?case=4a5ec777-01d0-4326-bed5-3986f79f460b\n\nIf it still does not work for you, reply to this email and we will look into it straight away.\n\nReportDesk Support",
+        "body": "Hello,\n\nWe re-ran the monthly CSV export for your workspace for the 2026-08 reporting period, and it now returns the records we expect.\n\nPlease try the export again here: http://127.0.0.1:55845/customer?case=4a5ec777-01d0-4326-bed5-3986f79f460b\n\nIf it still does not work for you, reply to this email and we will look into it straight away.\n\nReportDesk Support",
+        "draftId": "fixture-draft-1",
+        "recipient": "maya@northstar.example",
+        "rfc822MessageId": "rectify-e9ab37f2d354a0d95b1c7ebb0813f658@reportdesk.example",
+        "sender": "support@reportdesk.example",
+        "subject": "Re: Monthly report export still empty",
+        "threadId": "thread-northstar-export",
+        "verificationId": "0245c019-390a-49dc-957f-4d6244755906"
+      },
+      "payloadHash": "195111b23163d9890d499b8fb3815e519fbacf42631eb41ab203506d546f1f48",
+      "status": "CONFIRMED",
+      "attempts": [
+        {
+          "number": 1,
+          "startedAt": "2026-09-13T22:48:01.117Z",
+          "finishedAt": "2026-09-13T22:48:01.118Z",
+          "outcome": "CONFIRMED",
+          "error": null
+        }
+      ],
+      "providerIds": [
+        "fixture-sent-1"
+      ],
+      "uncertaintyReason": null,
+      "error": null,
+      "createdAt": "2026-09-13T22:48:01.085Z",
+      "updatedAt": "2026-09-13T22:48:01.118Z"
+    },
+    {
+      "id": "dfe75ba4-9cf7-430a-a918-e71fa0b910f5",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "version": 1,
+      "logicalKey": "case:4a5ec777-01d0-4326-bed5-3986f79f460b:approval-request:0245c019-390a-49dc-957f-4d6244755906",
+      "provider": "slack",
+      "kind": "POST_APPROVAL_REQUEST",
+      "payload": {
+        "approvalId": "53b33423-2539-47cc-b9d6-38f4e7c7f643",
+        "nonce": "Mbb_Lxh3xuQoo70hg4Qr7G6e",
+        "sendActionId": "57b0d660-0f9c-4d0a-9882-c67b31c4c6d7",
+        "text": "Approval needed: exact customer message\nTo: maya@northstar.example\nSubject: Re: Monthly report export still empty\n\nHello,\n\nWe re-ran the monthly CSV export for your workspace for the 2026-08 reporting period, and it now returns the records we expect.\n\nPlease try the export again here: http://127.0.0.1:55845/customer?case=4a5ec777-01d0-4326-bed5-3986f79f460b\n\nIf it still does not work for you, reply to this email and we will look into it straight away.\n\nReportDesk Support\n\nCheck: HTTP 200; 1 of 1 expected records; result PASS at 2026-09-13T22:47:58.184Z. Approval expires in 5 minutes.\n(rectify-action:case:4a5ec777-01d0-4326-bed5-3986f79f460b:approval-request:0245c019-390a-49dc-957f-4d6244755906)",
+        "verificationId": "0245c019-390a-49dc-957f-4d6244755906"
+      },
+      "payloadHash": "9f8b6505655bb7507bf08906d6a6712cd3e42c4d36f41a6dc9839e4e34edf4f6",
+      "status": "CONFIRMED",
+      "attempts": [
+        {
+          "number": 1,
+          "startedAt": "2026-09-13T22:48:01.086Z",
+          "finishedAt": "2026-09-13T22:48:01.087Z",
+          "outcome": "CONFIRMED",
+          "error": null
+        }
+      ],
+      "providerIds": [
+        "1789339681.000001"
+      ],
+      "uncertaintyReason": null,
+      "error": null,
+      "createdAt": "2026-09-13T22:48:01.085Z",
+      "updatedAt": "2026-09-13T22:48:01.087Z"
+    },
+    {
+      "id": "17ec0a62-8779-4eae-8b64-ace8d86b1f59",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "version": 1,
+      "logicalKey": "case:4a5ec777-01d0-4326-bed5-3986f79f460b:recovery-comment:1",
+      "provider": "github",
+      "kind": "COMMENT_RECOVERY",
+      "payload": {
+        "issueNumber": 41,
+        "text": "Customer recovery observed for tenant northstar: the customer's own csv-export-v1 export succeeded (product request e99500f7-02c2-430d-9d82-90b73af04b80).\nThe original engineering issue status was not changed by Rectify.\n(rectify-action:case:4a5ec777-01d0-4326-bed5-3986f79f460b:recovery-comment:1)"
+      },
+      "payloadHash": "ffc61cc77402648463d1dbce69fc013e11c90e343bd144076bc6ed6b4a1c9bd5",
+      "status": "CONFIRMED",
+      "attempts": [
+        {
+          "number": 1,
+          "startedAt": "2026-09-13T22:48:01.143Z",
+          "finishedAt": "2026-09-13T22:48:01.143Z",
+          "outcome": "CONFIRMED",
+          "error": null
+        }
+      ],
+      "providerIds": [
+        "1",
+        "https://github.local/reportdesk/app/issues/41#issuecomment-1"
+      ],
+      "uncertaintyReason": null,
+      "error": null,
+      "createdAt": "2026-09-13T22:48:01.142Z",
+      "updatedAt": "2026-09-13T22:48:01.143Z"
+    },
+    {
+      "id": "142a7bfb-57aa-464b-9868-d11609d6d217",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "version": 1,
+      "logicalKey": "case:4a5ec777-01d0-4326-bed5-3986f79f460b:recovery-update:1",
+      "provider": "slack",
+      "kind": "POST_RECOVERY_UPDATE",
+      "payload": {
+        "text": "Customer recovery observed for tenant northstar: the customer's own csv-export-v1 export succeeded (product request e99500f7-02c2-430d-9d82-90b73af04b80).\nThe original engineering issue status was not changed by Rectify.\n(rectify-action:case:4a5ec777-01d0-4326-bed5-3986f79f460b:recovery-update:1)"
+      },
+      "payloadHash": "8f80add6d775bd56ea87bce6de6533744d9d84295cf35f874ea7e479f61a8435",
+      "status": "CONFIRMED",
+      "attempts": [
+        {
+          "number": 1,
+          "startedAt": "2026-09-13T22:48:01.144Z",
+          "finishedAt": "2026-09-13T22:48:01.144Z",
+          "outcome": "CONFIRMED",
+          "error": null
+        }
+      ],
+      "providerIds": [
+        "1789339681.000002"
+      ],
+      "uncertaintyReason": null,
+      "error": null,
+      "createdAt": "2026-09-13T22:48:01.143Z",
+      "updatedAt": "2026-09-13T22:48:01.144Z"
+    }
+  ],
+  "approvals": [
+    {
+      "id": "53b33423-2539-47cc-b9d6-38f4e7c7f643",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "organizationId": "reportdesk",
+      "tenantId": "northstar",
+      "caseVersion": 4,
+      "actionId": "57b0d660-0f9c-4d0a-9882-c67b31c4c6d7",
+      "actionVersion": 1,
+      "actionHash": "195111b23163d9890d499b8fb3815e519fbacf42631eb41ab203506d546f1f48",
+      "providerAccountId": "support@reportdesk.example",
+      "draftId": "fixture-draft-1",
+      "threadId": "thread-northstar-export",
+      "sender": "support@reportdesk.example",
+      "recipients": [
+        "maya@northstar.example"
+      ],
+      "subject": "Re: Monthly report export still empty",
+      "body": "Hello,\n\nWe re-ran the monthly CSV export for your workspace for the 2026-08 reporting period, and it now returns the records we expect.\n\nPlease try the export again here: http://127.0.0.1:55845/customer?case=4a5ec777-01d0-4326-bed5-3986f79f460b\n\nIf it still does not work for you, reply to this email and we will look into it straight away.\n\nReportDesk Support",
+      "approvedMime": "From: support@reportdesk.example\r\nTo: maya@northstar.example\r\nSubject: Re: Monthly report export still empty\r\nMessage-ID: <rectify-e9ab37f2d354a0d95b1c7ebb0813f658@reportdesk.example>\r\nX-Rectify-Action: case:4a5ec777-01d0-4326-bed5-3986f79f460b:customer-draft:0245c019-390a-49dc-957f-4d6244755906\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=\"UTF-8\"\r\nContent-Transfer-Encoding: 8bit\r\n\r\nHello,\n\nWe re-ran the monthly CSV export for your workspace for the 2026-08 reporting period, and it now returns the records we expect.\n\nPlease try the export again here: http://127.0.0.1:55845/customer?case=4a5ec777-01d0-4326-bed5-3986f79f460b\n\nIf it still does not work for you, reply to this email and we will look into it straight away.\n\nReportDesk Support",
+      "businessFieldsHash": "195111b23163d9890d499b8fb3815e519fbacf42631eb41ab203506d546f1f48",
+      "verificationId": "0245c019-390a-49dc-957f-4d6244755906",
+      "appRevision": 1,
+      "configRevision": 2,
+      "policyVersion": "customer-send-policy-v1",
+      "approverId": "U-EVAL-APPROVER",
+      "slackWorkspaceId": "T-EVAL",
+      "slackChannelId": "C-EVAL-ENG",
+      "slackMessageId": "1789339681.000001",
+      "nonce": "Mbb_Lxh3xuQoo70hg4Qr7G6e",
+      "decision": "APPROVED",
+      "expiresAt": "2026-09-13T22:52:58.184Z",
+      "consumedAt": "2026-09-13T22:48:01.117Z",
+      "revokedAt": null,
+      "createdAt": "2026-09-13T22:48:01.087Z"
+    }
+  ],
+  "outcomeEvents": [
+    {
+      "eventId": "50b12ca3-fbd5-46be-b3e2-5c74416549b4",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "tenantId": "northstar",
+      "actorType": "CUSTOMER",
+      "actorId": "maya",
+      "workflow": "csv-export-v1",
+      "manifestRevision": 1,
+      "appRevision": 1,
+      "configRevision": 2,
+      "requestId": "e99500f7-02c2-430d-9d82-90b73af04b80",
+      "result": "SUCCEEDED",
+      "occurredAt": "2026-09-13T22:48:01.140Z",
+      "signature": "22144844b3d5f058547c5a699f5550f7930e0ecb5ebec744448a48b2877766fb"
+    }
+  ],
+  "providerEffects": [
+    {
+      "provider": "gmail",
+      "kind": "SEND_CUSTOMER_EMAIL",
+      "logicalKey": "case:4a5ec777-01d0-4326-bed5-3986f79f460b:customer-send:0245c019-390a-49dc-957f-4d6244755906",
+      "externalId": "fixture-sent-1",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "tenantId": "northstar",
+      "occurredAt": "2026-09-13T22:48:01.118Z",
+      "payloadHash": "195111b23163d9890d499b8fb3815e519fbacf42631eb41ab203506d546f1f48",
+      "recipient": "maya@northstar.example",
+      "approvalId": "53b33423-2539-47cc-b9d6-38f4e7c7f643"
+    },
+    {
+      "provider": "github",
+      "kind": "COMMENT_RECOVERY",
+      "logicalKey": "case:4a5ec777-01d0-4326-bed5-3986f79f460b:recovery-comment:1",
+      "externalId": "1",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "tenantId": "northstar",
+      "occurredAt": "2026-09-13T22:48:01.143Z",
+      "payloadHash": "ffc61cc77402648463d1dbce69fc013e11c90e343bd144076bc6ed6b4a1c9bd5",
+      "recipient": null,
+      "approvalId": null
+    },
+    {
+      "provider": "slack",
+      "kind": "POST_APPROVAL_REQUEST",
+      "logicalKey": "case:4a5ec777-01d0-4326-bed5-3986f79f460b:approval-request:0245c019-390a-49dc-957f-4d6244755906",
+      "externalId": "1789339681.000001",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "tenantId": "northstar",
+      "occurredAt": "2026-09-13T22:48:01.087Z",
+      "payloadHash": "9f8b6505655bb7507bf08906d6a6712cd3e42c4d36f41a6dc9839e4e34edf4f6",
+      "recipient": null,
+      "approvalId": null
+    },
+    {
+      "provider": "slack",
+      "kind": "POST_RECOVERY_UPDATE",
+      "logicalKey": "case:4a5ec777-01d0-4326-bed5-3986f79f460b:recovery-update:1",
+      "externalId": "1789339681.000002",
+      "caseId": "4a5ec777-01d0-4326-bed5-3986f79f460b",
+      "tenantId": "northstar",
+      "occurredAt": "2026-09-13T22:48:01.144Z",
+      "payloadHash": "8f80add6d775bd56ea87bce6de6533744d9d84295cf35f874ea7e479f61a8435",
+      "recipient": null,
+      "approvalId": null
+    }
+  ],
+  "tenantAccesses": [
+    {
+      "provider": "reportdesk",
+      "tenantId": "northstar",
+      "authorized": true
+    },
+    {
+      "provider": "reportdesk",
+      "tenantId": "northstar",
+      "authorized": true
+    }
+  ],
+  "forbiddenEffects": [],
+  "configAudits": [
+    {
+      "kind": "HUMAN_APPLIED_DEMO_CONFIGURATION_FIX",
+      "tenantId": "northstar",
+      "occurredAt": "2026-09-13T22:47:49.390Z",
+      "toRevision": 2
+    }
+  ],
+  "clarifications": [],
+  "sourceChallenges": [
+    "DISTRACTOR"
+  ],
+  "approvalCallbacks": [
+    {
+      "approvalId": "53b33423-2539-47cc-b9d6-38f4e7c7f643",
+      "payloadHash": "195111b23163d9890d499b8fb3815e519fbacf42631eb41ab203506d546f1f48",
+      "accepted": true,
+      "rejectionKind": null
+    }
+  ],
+  "reconciliations": []
+}
