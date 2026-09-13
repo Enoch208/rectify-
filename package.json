@@ -11,6 +11,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "eval": "pnpm --filter @rectify/evals eval",
     "smoke:providers": "pnpm --filter @rectify/providers smoke",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
