@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "status": "NOT_RUN",
+  "recordedAt": "2026-09-13T17:41:00.000Z",
+  "repositoryCommit": null,
+  "modelId": null,
+  "promptRevision": null,
+  "configId": null,
+  "releaseId": null,
+  "traceId": null,
+  "environments": {
+    "gmail": "NOT RUN",
+    "github": "NOT RUN",
+    "slack": "NOT RUN",
+    "reportdesk": "NOT RUN"
+  },
+  "scenarioTrialsExpected": 18,
+  "scenarioTrialsObserved": 0,
+  "reason": "Independent scenario artifacts, evaluator outcome secret, live provider credentials, model configuration, and Lemma configuration were unavailable."
+}
