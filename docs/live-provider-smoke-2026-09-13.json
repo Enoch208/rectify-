@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "executedAt": "2026-09-13T22:44:40.166Z",
+  "repositoryCommit": "5cb7a90",
+  "correlationId": "4310ceef-c5e7-4747-b4fc-75875f676fe0",
+  "status": "PASS",
+  "providers": {
+    "gmail": {
+      "environment": "LIVE PROVIDER",
+      "read": "PASS",
+      "write": "PASS",
+      "readBack": "PASS",
+      "effect": "DRAFT_CREATED_NOT_SENT",
+      "draftId": "r-5347421653066028640"
+    },
+    "github": {
+      "environment": "LIVE PROVIDER",
+      "read": "PASS",
+      "write": "PASS",
+      "readBack": "PASS",
+      "issueUrl": "https://github.com/Enoch208/reportdesk-app/issues/5"
+    },
+    "slack": {
+      "environment": "LIVE PROVIDER",
+      "read": "PASS",
+      "write": "PASS",
+      "readBack": "PASS",
+      "messageTs": "1789339485.087939"
+    }
+  }
+}
